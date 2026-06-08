@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learner Profile Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="screen-container">
+        <div class="header">
+            <div class="welcome-group">
+                <div class="avatar-circle">
+                    <div class="avatar-icon"></div>
+                </div>
+                <h1 class="welcome-text">
+                    Welcome, 
+                    <span id="displayFirstName">Jake!</span>
+                </h1>
+            </div>
+            <div class="settings-btn">⚙️</div>
+        </div>
+
+        <div class="profile-card">
+            <div class="info-row">
+                <span class="info-label">NAME:</span>
+                <span class="info-value">Jake J. Johnson</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">BIRTHDAY:</span>
+                <span class="info-value">01/01/2021</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">LEARNING TYPE:</span>
+                <span class="info-value">------</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">SKILL LEVEL:</span>
+                <span class="info-value">------</span>
+            </div>
+
+            <div class="divider">PREFERENCES</div>
+
+            <div class="pref-row">
+                <span class="pref-label">Font size</span>
+                <select class="pref-select">
+                    <option value="Large">Large</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Small">Small</option>
+                </select>
+            </div>
+
+            <div class="pref-row">
+                <span class="pref-label">Color Mode</span>
+                <select class="pref-select">
+                    <option value="High Contrast">High Contrast</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Dark Mode">Dark Mode</option>
+                </select>
+            </div>
+
+            <div class="pref-row">
+                <span class="pref-label">Text-to-Speech</span>
+                <div class="toggle-container">
+                    <span>off</span>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span>on</span>
+                </div>
+            </div>
+
+            <button class="btn-adjust">Adjust Learning Preference</button>
+        </div>
+
+        <div style="z-index: 10;">
+            <a href="parent_profile.html" style="text-decoration: none; display: block;">
+                <div class="parent-profile-card">
+                    <div class="parent-avatar"></div>
+                    <div class="parent-text">
+                        Parent
+                        <span>Profile</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="bottom-illustration"></div>
+    </div>
+
+    <script src="student-setting.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Profile Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="screen-container">
+        <div class="header">
+            <div class="welcome-group">
+                <div class="avatar-circle">
+                    <div class="parent-avatar-icon"></div>
+                </div>
+                <h1 class="welcome-text">
+                    Welcome, 
+                    <span id="displayParentGreeting">Parent!</span>
+                </h1>
+            </div>
+            <div class="settings-btn">⚙️</div>
+        </div>
+
+        <div class="profile-card">
+            <div class="info-row">
+                <span class="info-label">NAME:</span>
+                <span class="info-value" id="displayParentName">Paula J. Johnson</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">BIRTHDAY:</span>
+                <span class="info-value" id="displayParentBirthday">01/01/1989</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">RELATIONSHIP:</span>
+                <span class="info-value" id="displayRelationship">Mother</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">SKILL LEVEL:</span>
+                <span class="info-value" id="displaySkillLevel">------</span>
+            </div>
+
+            <div class="divider">PREFERENCES</div>
+
+            <div class="pref-row">
+                <span class="pref-label">Font size</span>
+                <select class="pref-select" id="fontSizeSelect">
+                    <option value="large">Large</option>
+                    <option value="medium">Medium</option>
+                    <option value="small">Small</option>
+                </select>
+            </div>
+
+            <div class="pref-row">
+                <span class="pref-label">Color Mode</span>
+                <select class="pref-select" id="colorModeSelect">
+                    <option value="contrast">High Contrast</option>
+                    <option value="normal">Normal</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+            </div>
+
+            <div class="pref-row">
+                <span class="pref-label">Text-to-Speech</span>
+                <div class="toggle-container">
+                    <span>off</span>
+                    <label class="switch">
+                        <input type="checkbox" id="ttsToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span>on</span>
+                </div>
+            </div>
+
+            <button class="btn-adjust">Adjust Learning Preference</button>
+        </div>
+
+        <div>
+            <a href="student.html" style="text-decoration: none;">
+                <div class="learner-profile-card">
+                    <div class="learner-avatar"></div>
+                    <div class="learner-text">
+                        Learner
+                        <span>Profile</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="bottom-illustration"></div>
+    </div>
+
+    <script src="parent-setting.js"></script>
+</body>
+</html>
