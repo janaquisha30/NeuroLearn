@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroLearn - Login</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+
+<div id="login-screen" class="screen active">
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+
+        <div class="brand">
+            <h1>NeuroLearn</h1>
+            <p>Smart learning for every young mind 🧠</p>
+        </div>
+
+        <div class="auth-card">
+
+            <h2>Hello! Welcome Back!</h2>
+            <p class="subtitle">Let's Login to Your Account</p>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input
+                    type="text"
+                    id="login-username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="login-password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <div class="form-group" style="display:flex;justify-content:center;margin:20px 0;">
+                <div
+                    class="g-recaptcha"
+                    data-sitekey="6LdRp00tAAAAAK-JJtec6l62AkBfi4BkYuT2PTQT">
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="goToDashboardWithCaptcha()">
+                Login
+            </button>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="signup.html">Create one!</a>
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
