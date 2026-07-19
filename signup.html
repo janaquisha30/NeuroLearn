@@ -10,40 +10,95 @@
 <body>
 
 <!-- =================== SIGNUP SCREEN =================== -->
-<div id="login-screen" class="screen active">
+<div id="signup-screen" class="screen active">
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
         <div class="brand">
             <h1>NeuroLearn</h1>
             <p>Smart learning for every young mind 🧠</p>
         </div>
 
-        <!-- Register Form -->
-        <div class="auth-card" id="register-form">
-            <h2>Hello!</h2>
-            <p class="subtitle">Create your account</p>
+        <!-- Sign Up Form -->
+        <div class="auth-card">
+            <h2>Create Your Account!</h2>
+            <p class="subtitle">Join NeuroLearn today</p>
+
+            <!-- Display Name -->
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" placeholder="Enter your email" id="signup-email"/>
+                <label>Display Name</label>
+                <input 
+                    type="text" 
+                    id="signup-displayname" 
+                    placeholder="What should we call you?" 
+                    autocomplete="name"
+                    required>
             </div>
+
+            <!-- Email -->
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" placeholder="Choose a username" id="signup-username"/>
+                <label>Email Address</label>
+                <input 
+                    type="email" 
+                    id="signup-email" 
+                    placeholder="Enter your email" 
+                    autocomplete="email"
+                    required>
             </div>
+
+            <!-- Password -->
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Create a password" id="signup-password"/>
+                <input 
+                    type="password" 
+                    id="signup-password" 
+                    placeholder="Create a password (min. 6 characters)" 
+                    autocomplete="new-password"
+                    required>
+                <small style="color:var(--text-light);font-size:0.7rem;margin-top:4px;display:block;">
+                    🔒 Password must be at least 6 characters
+                </small>
             </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="signup-confirm-password" 
+                    placeholder="Confirm your password" 
+                    autocomplete="new-password"
+                    required>
+            </div>
+
+            <!-- Role Selector -->
             <div class="role-selector">
-                <button class="role-btn active" onclick="selectRole(this)">As student</button>
-                <button class="role-btn" onclick="selectRole(this)">As admin</button>
-                <button class="role-btn" onclick="selectRole(this)">As parent</button>
+                <button class="role-btn active" onclick="selectRole(this)" data-role="student">🧒 Student</button>
+                <button class="role-btn" onclick="selectRole(this)" data-role="parent">👩 Parent</button>
+                <button class="role-btn" onclick="selectRole(this)" data-role="admin">🔧 Admin</button>
             </div>
-            <button class="btn-primary" onclick="goToDashboard()">Create Account</button>
-            <p class="auth-switch">Already have an account? <a href="index.html">Login here!</a></p>
+
+            <!-- Sign Up Button -->
+            <button class="btn-primary" id="signup-btn" onclick="handleSignup()">
+                Create Account
+            </button>
+
+            <!-- Login Link -->
+            <p class="auth-switch">
+                Already have an account? 
+                <a href="index.html">Login here!</a>
+            </p>
         </div>
     </div>
 </div>
 
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================ -->
+<!-- SUPABASE SCRIPTS -->
+<!-- ============================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
