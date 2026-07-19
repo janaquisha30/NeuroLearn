@@ -1,290 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeuroLearn - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<!-- =================== DASHBOARD SCREEN =================== -->
-<div id="dashboard-screen" class="screen active">
+    <div id="dashboard-screen" class="screen active">
+        <nav class="topnav">
+            <a class="nav-logo" href="dashboard.html">NeuroLearn</a>
+            <div class="nav-center">
+                <a class="nav-tab active" href="dashboard.html">🏠 Dashboard</a>
+                <a class="nav-tab" href="lesson.html">📐 Lesson</a>
+                <a class="nav-tab" href="student-profile.html">👤 Student Profile</a>
+                <a class="nav-tab" href="parent-profile.html">👩 Parent Profile</a>
+                <a class="nav-tab" href="report.html">📋 Report</a>
+            </div>
+            <div class="nav-right">
+                <button class="icon-btn" title="Notifications"
+                    onclick="showToast('Notifications coming soon!')">🔔</button>
+                <a class="avatar-btn" href="student-profile.html">
+                    <div class="avatar-circle">🧒</div>
+                    <span id="nav-username">Student</span>
+                </a>
+            </div>
+        </nav>
 
-    <!-- Top Nav -->
-    <nav class="topnav">
-        <div class="nav-logo">NeuroLearn</div>
-        <div class="nav-center">
-            <button class="nav-tab active" onclick="setNavTab(this, 'math')">📐 Math</button>
-            <button class="nav-tab" onclick="setNavTab(this, 'science')">🔬 Science</button>
-            <button class="nav-tab" onclick="setNavTab(this, 'reading')">📖 Reading</button>
-            <button class="nav-tab" onclick="setNavTab(this, 'history')">🏛️ History</button>
+        <div class="dashboard-body">
+            <aside class="sidebar">
+                <div class="card welcome-card">
+                    <div class="welcome-avatar">🧒</div>
+                    <h2>Welcome, <span id="welcome-username">Student</span>!</h2>
+                    <p>Keep up the great work!</p>
+                    <div class="level-badge">⭐ Level 1 Learner</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"><span class="icon">🔥</span> Weekly Streak</div>
+                    <div class="streak-row">
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-mon">○</div>
+                            <span class="streak-label">Mon</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-tue">○</div>
+                            <span class="streak-label">Tue</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-wed">○</div>
+                            <span class="streak-label">Wed</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-thu">○</div>
+                            <span class="streak-label">Thu</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-fri">○</div>
+                            <span class="streak-label">Fri</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-sat">○</div>
+                            <span class="streak-label">Sat</span>
+                        </div>
+                        <div class="streak-day">
+                            <div class="streak-dot" id="streak-sun">○</div>
+                            <span class="streak-label">Sun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"><span class="icon">🗂️</span> Menu</div>
+                    <div class="nav-items">
+                        <a class="nav-item active" href="dashboard.html">
+                            <div class="ni-icon">📚</div> My Lessons
+                        </a>
+                        <a class="nav-item" href="student-profile.html">
+                            <div class="ni-icon">📊</div> My Progress
+                        </a>
+                        <a class="nav-item" href="lesson.html">
+                            <div class="ni-icon">📝</div> Current Lesson
+                        </a>
+                        <a class="nav-item" href="#" onclick="showToast('Rewards coming soon!')">
+                            <div class="ni-icon">🏆</div> Rewards
+                        </a>
+                        <a class="nav-item" href="#" onclick="showToast('Messages coming soon!')">
+                            <div class="ni-icon">💬</div> Messages
+                        </a>
+                        <a class="nav-item" href="#" onclick="showLogout()">
+                            <div class="ni-icon">🚪</div> Logout
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <h2 style="font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--text-dark);">Select a
+                            Lesson to begin</h2>
+                        <p style="color:var(--text-mid);font-size:0.9rem;font-weight:600;margin-top:2px;">You have
+                            <strong style="color:var(--teal);">5 active</strong> lessons today
+                        </p>
+                    </div>
+                    <div id="subject-tabs" class="subject-tabs">
+                        <button class="subject-tab" onclick="filterSubject(this,'all')">📚 All</button>
+                        <button class="subject-tab active" onclick="filterSubject(this,'math')">📐 Math</button>
+                        <button class="subject-tab" onclick="filterSubject(this,'science')">🔬 Science</button>
+                        <button class="subject-tab" onclick="filterSubject(this,'reading')">📖 Reading</button>
+                        <button class="subject-tab" onclick="filterSubject(this,'history')">🏛️ History</button>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <span>Filter:</span>
+                    <select class="filter-select" id="difficulty-filter" onchange="filterDifficulty(this.value)">
+                        <option value="all">All Levels</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                    <button class="sort-btn ml-auto" onclick="showToast('Sorted by difficulty!')">↕ Sort</button>
+                </div>
+
+                <div class="lessons-grid" id="lessons-container">
+                    <!-- ADDITION LESSON -->
+                    <div class="lesson-card" data-subject="math" data-difficulty="beginner" data-lesson="addition">
+                        <div class="lesson-icon math">➕</div>
+                        <div class="lesson-info">
+                            <h3>Addition</h3>
+                            <p>Math · Chapter 2 · 5 exercises</p>
+                            <span class="difficulty-badge beginner">Beginner</span>
+                        </div>
+                        <div class="progress-wrap">
+                            <div class="progress-label"><span>Progress</span><span id="addition-progress">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" id="addition-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-action start" id="addition-btn" onclick="startLesson('addition')">▷ Start</button>
+                        </div>
+                    </div>
+
+                    <!-- SUBTRACTION LESSON -->
+                    <div class="lesson-card" data-subject="math" data-difficulty="intermediate" data-lesson="subtraction">
+                        <div class="lesson-icon math">➖</div>
+                        <div class="lesson-info">
+                            <h3>Subtraction</h3>
+                            <p>Math · Chapter 4 · 5 exercises</p>
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                        </div>
+                        <div class="progress-wrap">
+                            <div class="progress-label"><span>Progress</span><span id="subtraction-progress">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill blue" id="subtraction-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-action start" id="subtraction-btn" onclick="startLesson('subtraction')">▷ Start</button>
+                        </div>
+                    </div>
+
+                    <!-- PLANT LIFE CYCLE LESSON -->
+                    <div class="lesson-card" data-subject="science" data-difficulty="beginner" data-lesson="plant">
+                        <div class="lesson-icon science">🌱</div>
+                        <div class="lesson-info">
+                            <h3>Plant Life Cycle</h3>
+                            <p>Science · Chapter 1 · 5 exercises</p>
+                            <span class="difficulty-badge beginner">Beginner</span>
+                        </div>
+                        <div class="progress-wrap">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span id="plant-progress">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" id="plant-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-action start" id="plant-btn" onclick="startLesson('plant')">▷ Start</button>
+                        </div>
+                    </div>
+
+                    <!-- STORY COMPREHENSION LESSON -->
+                    <div class="lesson-card" data-subject="reading" data-difficulty="beginner" data-lesson="reading">
+                        <div class="lesson-icon reading">📖</div>
+                        <div class="lesson-info">
+                            <h3>Story Comprehension</h3>
+                            <p>Reading · Chapter 3 · 5 exercises</p>
+                            <span class="difficulty-badge beginner">Beginner</span>
+                        </div>
+                        <div class="progress-wrap">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span id="reading-progress">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill orange" id="reading-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-action start" id="reading-btn" onclick="startLesson('reading')">▷ Start</button>
+                        </div>
+                    </div>
+
+                    <!-- ANCIENT CIVILIZATIONS LESSON -->
+                    <div class="lesson-card" data-subject="history" data-difficulty="intermediate" data-lesson="ancient">
+                        <div class="lesson-icon history">🏛️</div>
+                        <div class="lesson-info">
+                            <h3>Ancient Civilizations</h3>
+                            <p>History · Chapter 2 · 5 exercises</p>
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                        </div>
+                        <div class="progress-wrap">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span id="ancient-progress">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill blue" id="ancient-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-action start" id="ancient-btn" onclick="startLesson('ancient')">▷ Start</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="right-panel">
+                <div class="card">
+                    <div class="card-title"><span class="icon">📅</span> Today's Progress</div>
+                    <div class="ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(110,198,245,0.2)"
+                                stroke-width="12" />
+                            <circle id="today-ring" cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="12"
+                                stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#2E8C8C" />
+                                    <stop offset="100%" style="stop-color:#6EC6F5" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-text" id="today-score">0/25<small>Total Questions</small></div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <div class="stat-val" id="total-correct">0</div>
+                            <div class="stat-lbl">Correct</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="total-answered">0</div>
+                            <div class="stat-lbl">Answered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="total-completed">0</div>
+                            <div class="stat-lbl">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="total-xp">0</div>
+                            <div class="stat-lbl">XP Earned</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">🏆</span> Achievements</div>
+                    <div class="achievement-list">
+                        <div class="achievement-item">
+                            <div class="ach-icon gold">🥇</div>
+                            <div class="ach-info">
+                                <h4>Math Wizard</h4>
+                                <p>Complete 10 math lessons</p>
+                            </div><span class="ach-points">+50 XP</span>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="ach-icon silver">⭐</div>
+                            <div class="ach-info">
+                                <h4>5-Day Streak</h4>
+                                <p>Learn 5 days in a row</p>
+                            </div><span class="ach-points">+30 XP</span>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="ach-icon bronze">📚</div>
+                            <div class="ach-info">
+                                <h4>Quick Learner</h4>
+                                <p>Finish a lesson in 5 mins</p>
+                            </div><span class="ach-points">+20 XP</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
         </div>
-        <div class="nav-right">
-            <button class="icon-btn" title="Notifications">🔔</button>
-            <div class="avatar-btn" onclick="showToast('Profile settings coming soon!')">
-                <div class="avatar-circle">🧒</div>
-                <span>Jake</span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Body -->
-    <div class="dashboard-body">
-
-        <!-- LEFT SIDEBAR -->
-        <aside class="sidebar">
-
-            <div class="card welcome-card">
-                <div class="welcome-avatar">🧒</div>
-                <h2>Welcome, <span id="username-display">Jake</span>!</h2>
-                <p>Keep up the great work!</p>
-                <div class="level-badge">⭐ Level 5 Learner</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><span class="icon">🔥</span> Weekly Streak</div>
-                <div class="streak-row">
-                    <div class="streak-day"><div class="streak-dot done">✓</div><span class="streak-label">Mon</span></div>
-                    <div class="streak-day"><div class="streak-dot done">✓</div><span class="streak-label">Tue</span></div>
-                    <div class="streak-day"><div class="streak-dot done">✓</div><span class="streak-label">Wed</span></div>
-                    <div class="streak-day"><div class="streak-dot done">✓</div><span class="streak-label">Thu</span></div>
-                    <div class="streak-day"><div class="streak-dot today">★</div><span class="streak-label">Fri</span></div>
-                    <div class="streak-day"><div class="streak-dot"></div><span class="streak-label">Sat</span></div>
-                    <div class="streak-day"><div class="streak-dot"></div><span class="streak-label">Sun</span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><span class="icon">🗂️</span> Menu</div>
-                <div class="nav-items">
-                    <div class="nav-item active"><div class="ni-icon">📚</div> My Lessons</div>
-                    <div class="nav-item" onclick="showToast('Progress page coming soon!')"><div class="ni-icon">📊</div> My Progress</div>
-                    <div class="nav-item" onclick="showToast('Assignments coming soon!')"><div class="ni-icon">📝</div> Assignments</div>
-                    <div class="nav-item" onclick="showToast('Rewards coming soon!')"><div class="ni-icon">🏆</div> Rewards</div>
-                    <div class="nav-item" onclick="showToast('Messages coming soon!')"><div class="ni-icon">💬</div> Messages</div>
-                    <div class="nav-item" onclick="showLogout()"><div class="ni-icon">🚪</div> Logout</div>
-                </div>
-            </div>
-
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-                <div>
-                    <h2 style="font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--text-dark);">Select a Lesson to begin</h2>
-                    <p style="color:var(--text-mid);font-size:0.9rem;font-weight:600;margin-top:2px;">You have <strong style="color:var(--teal);">3 active</strong> lessons today</p>
-                </div>
-                <div id="subject-tabs" class="subject-tabs">
-                    <button class="subject-tab active" onclick="filterSubject(this,'math')">📐 Math</button>
-                    <button class="subject-tab" onclick="filterSubject(this,'science')">🔬 Science</button>
-                    <button class="subject-tab" onclick="filterSubject(this,'reading')">📖 Reading</button>
-                    <button class="subject-tab" onclick="filterSubject(this,'history')">🏛️ History</button>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="filters-bar">
-                <span>Filter:</span>
-                <select class="filter-select" id="difficulty-filter" onchange="filterDifficulty(this.value)">
-                    <option value="all">All Levels</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                </select>
-                <select class="filter-select" id="status-filter">
-                    <option value="all">All Status</option>
-                    <option value="progress">In Progress</option>
-                    <option value="notstarted">Not Started</option>
-                    <option value="completed">Completed</option>
-                </select>
-                <button class="sort-btn ml-auto" onclick="showToast('Sorted by difficulty!')">↕ Sort</button>
-            </div>
-
-            <!-- Lessons -->
-            <div class="lessons-grid" id="lessons-container">
-
-                <div class="lesson-card" data-subject="math" data-difficulty="intermediate" data-progress="68" style="animation-delay:0.05s">
-                    <div class="lesson-icon math">➖</div>
-                    <div class="lesson-info">
-                        <h3>Subtraction</h3>
-                        <p>Math · Chapter 4 · 8 exercises</p>
-                        <span class="difficulty-badge intermediate">Intermediate</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>68%</span></div>
-                        <div class="progress-bar"><div class="progress-fill blue" style="width:68%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action continue" onclick="event.stopPropagation(); showToast('Resuming Subtraction...')">▶ Continue</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="math" data-difficulty="beginner" data-progress="0" style="animation-delay:0.1s">
-                    <div class="lesson-icon math">➕</div>
-                    <div class="lesson-info">
-                        <h3>Addition</h3>
-                        <p>Math · Chapter 2 · 6 exercises</p>
-                        <span class="difficulty-badge beginner">Beginner</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
-                        <div class="progress-bar"><div class="progress-fill green" style="width:0%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action start" onclick="event.stopPropagation(); showToast('Starting Addition!')">▷ Start</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="math" data-difficulty="intermediate" data-progress="0" style="animation-delay:0.15s">
-                    <div class="lesson-icon math">🔢</div>
-                    <div class="lesson-info">
-                        <h3>Fractions</h3>
-                        <p>Math · Chapter 6 · 10 exercises</p>
-                        <span class="difficulty-badge intermediate">Intermediate</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
-                        <div class="progress-bar"><div class="progress-fill orange" style="width:0%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action start" onclick="event.stopPropagation(); showToast('Starting Fractions!')">▷ Start</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="science" data-difficulty="beginner" data-progress="100" style="animation-delay:0.2s">
-                    <div class="lesson-icon science">🌱</div>
-                    <div class="lesson-info">
-                        <h3>Plant Life Cycle</h3>
-                        <p>Science · Chapter 1 · 5 exercises</p>
-                        <span class="difficulty-badge beginner">Beginner</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>100%</span></div>
-                        <div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action review" onclick="event.stopPropagation(); showToast('Reviewing Plant Life Cycle!')">↺ Review</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="science" data-difficulty="advanced" data-progress="30" style="animation-delay:0.25s">
-                    <div class="lesson-icon science">⚗️</div>
-                    <div class="lesson-info">
-                        <h3>Chemical Reactions</h3>
-                        <p>Science · Chapter 5 · 12 exercises</p>
-                        <span class="difficulty-badge advanced">Advanced</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>30%</span></div>
-                        <div class="progress-bar"><div class="progress-fill blue" style="width:30%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action continue" onclick="event.stopPropagation(); showToast('Resuming Chemical Reactions...')">▶ Continue</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="reading" data-difficulty="beginner" data-progress="45" style="animation-delay:0.3s">
-                    <div class="lesson-icon reading">📖</div>
-                    <div class="lesson-info">
-                        <h3>Story Comprehension</h3>
-                        <p>Reading · Chapter 3 · 7 exercises</p>
-                        <span class="difficulty-badge beginner">Beginner</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>45%</span></div>
-                        <div class="progress-bar"><div class="progress-fill orange" style="width:45%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action continue" onclick="event.stopPropagation(); showToast('Resuming Story Comprehension...')">▶ Continue</button>
-                    </div>
-                </div>
-
-                <div class="lesson-card" data-subject="history" data-difficulty="intermediate" data-progress="15" style="animation-delay:0.35s">
-                    <div class="lesson-icon history">🏛️</div>
-                    <div class="lesson-info">
-                        <h3>Ancient Civilizations</h3>
-                        <p>History · Chapter 2 · 9 exercises</p>
-                        <span class="difficulty-badge intermediate">Intermediate</span>
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-label"><span>Progress</span><span>15%</span></div>
-                        <div class="progress-bar"><div class="progress-fill blue" style="width:15%"></div></div>
-                    </div>
-                    <div class="lesson-action">
-                        <button class="btn-action continue" onclick="event.stopPropagation(); showToast('Resuming Ancient Civilizations...')">▶ Continue</button>
-                    </div>
-                </div>
-
-            </div>
-        </main>
-
-        <!-- RIGHT PANEL -->
-        <aside class="right-panel">
-
-            <div class="card">
-                <div class="card-title"><span class="icon">📅</span> Today's Progress</div>
-                <div class="ring-wrap">
-                    <svg width="120" height="120" viewBox="0 0 120 120">
-                        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(110,198,245,0.2)" stroke-width="12"/>
-                        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="12"
-                            stroke-dasharray="314" stroke-dashoffset="220" stroke-linecap="round"/>
-                        <defs>
-                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#2E8C8C"/>
-                                <stop offset="100%" style="stop-color:#6EC6F5"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="ring-text">50/50<small>Today's Score</small></div>
-                </div>
-                <div class="progress-stats">
-                    <div class="stat-item"><div class="stat-val">15</div><div class="stat-lbl">Mins Today</div></div>
-                    <div class="stat-item"><div class="stat-val">3</div><div class="stat-lbl">Lessons Done</div></div>
-                    <div class="stat-item"><div class="stat-val">🔥5</div><div class="stat-lbl">Day Streak</div></div>
-                    <div class="stat-item"><div class="stat-val">240</div><div class="stat-lbl">XP Earned</div></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><span class="icon">🏆</span> Achievements</div>
-                <div class="achievement-list">
-                    <div class="achievement-item">
-                        <div class="ach-icon gold">🥇</div>
-                        <div class="ach-info">
-                            <h4>Math Wizard</h4>
-                            <p>Complete 10 math lessons</p>
-                        </div>
-                        <span class="ach-points">+50 XP</span>
-                    </div>
-                    <div class="achievement-item">
-                        <div class="ach-icon silver">⭐</div>
-                        <div class="ach-info">
-                            <h4>5-Day Streak</h4>
-                            <p>Learn 5 days in a row</p>
-                        </div>
-                        <span class="ach-points">+30 XP</span>
-                    </div>
-                    <div class="achievement-item">
-                        <div class="ach-icon bronze">📚</div>
-                        <div class="ach-info">
-                            <h4>Quick Learner</h4>
-                            <p>Finish a lesson in 5 mins</p>
-                        </div>
-                        <span class="ach-points">+20 XP</span>
-                    </div>
-                </div>
-            </div>
-
-        </aside>
     </div>
-</div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // Start lesson function
+        function startLesson(lessonType) {
+            localStorage.setItem('currentLesson', lessonType);
+            window.location.href = 'lesson.html';
+        }
+
+        // Load saved progress from localStorage for ALL 5 lessons
+        function loadLessonProgress() {
+            const lessons = [
+                { id: 'addition', progressEl: 'addition-progress', barEl: 'addition-bar', btnEl: 'addition-btn' },
+                { id: 'subtraction', progressEl: 'subtraction-progress', barEl: 'subtraction-bar', btnEl: 'subtraction-btn' },
+                { id: 'plant', progressEl: 'plant-progress', barEl: 'plant-bar', btnEl: 'plant-btn' },
+                { id: 'reading', progressEl: 'reading-progress', barEl: 'reading-bar', btnEl: 'reading-btn' },
+                { id: 'ancient', progressEl: 'ancient-progress', barEl: 'ancient-bar', btnEl: 'ancient-btn' }
+            ];
+
+            let totalCorrect = 0;
+            let totalQuestions = 0;
+            let totalAnswered = 0;
+            let totalXP = 0;
+            let completedLessons = 0;
+
+            lessons.forEach(lesson => {
+                // Get progress percentage, cap at 100%
+                let pct = parseInt(localStorage.getItem(`progress_${lesson.id}_pct`)) || 0;
+                if (pct > 100) pct = 100;
+
+                // Get saved progress data
+                const savedProgress = localStorage.getItem(`progress_${lesson.id}`);
+                let correctCount = 0;
+                let answered = 0;
+                let completed = false;
+                
+                if (savedProgress) {
+                    try {
+                        const progress = JSON.parse(savedProgress);
+                        correctCount = progress.correctCount || 0;
+                        answered = progress.answers ? progress.answers.filter(a => a !== null).length : 0;
+                        completed = progress.completed || false;
+                    } catch(e) {}
+                }
+
+                // Accumulate totals for Today's Progress
+                totalCorrect += correctCount;
+                totalQuestions += 5;
+                totalAnswered += answered;
+                totalXP += correctCount * 10;
+                if (completed) completedLessons++;
+
+                // Update progress display
+                const progressEl = document.getElementById(lesson.progressEl);
+                const barEl = document.getElementById(lesson.barEl);
+                if (progressEl) progressEl.textContent = pct + '%';
+                if (barEl) barEl.style.width = pct + '%';
+
+                // Update button based on progress
+                const btn = document.getElementById(lesson.btnEl);
+                if (btn) {
+                    if (pct === 0) {
+                        btn.textContent = '▷ Start';
+                        btn.className = 'btn-action start';
+                        btn.onclick = () => startLesson(lesson.id);
+                    } else if (pct < 100) {
+                        btn.textContent = '▶ Continue';
+                        btn.className = 'btn-action continue';
+                        btn.onclick = () => startLesson(lesson.id);
+                    } else if (pct === 100) {
+                        btn.textContent = '↺ Retake';
+                        btn.className = 'btn-action review';
+                        btn.onclick = () => {
+                            if (confirm(`Are you sure you want to retake the ${lesson.id.charAt(0).toUpperCase() + lesson.id.slice(1)} lesson? This will reset your progress.`)) {
+                                localStorage.removeItem(`progress_${lesson.id}`);
+                                localStorage.removeItem(`progress_${lesson.id}_pct`);
+                                loadLessonProgress();
+                                showToast('Progress reset! You can retake the lesson now.');
+                            }
+                        };
+                    }
+                }
+            });
+
+            // Update Today's Progress section
+            updateTodayProgress(totalCorrect, totalQuestions, totalAnswered, totalXP, completedLessons);
+        }
+
+        // Update Today's Progress section
+        function updateTodayProgress(correct, total, answered, xp, completed) {
+            // Update ring
+            const ring = document.getElementById('today-ring');
+            const pct = total > 0 ? Math.min(correct / total, 1) : 0;
+            const offset = 314 - (314 * pct);
+            ring.style.strokeDashoffset = offset;
+
+            // Update ring text
+            document.getElementById('today-score').innerHTML = `${correct}/${total}<small>Total Questions</small>`;
+
+            // Update stats
+            document.getElementById('total-correct').textContent = correct;
+            document.getElementById('total-answered').textContent = answered;
+            document.getElementById('total-completed').textContent = completed;
+            document.getElementById('total-xp').textContent = xp;
+        }
+
+        // Update filter functions to handle 'all' subject
+        const originalFilterLessons = filterLessons;
+        window.filterLessons = function (subject, difficulty) {
+            currentSubject = subject;
+            const cards = document.querySelectorAll('.lesson-card');
+            cards.forEach(card => {
+                const cardSubject = card.dataset.subject;
+                const cardDifficulty = card.dataset.difficulty;
+                const matchSubject = subject === 'all' || cardSubject === subject;
+                const matchDiff = difficulty === 'all' || cardDifficulty === difficulty;
+                card.style.display = matchSubject && matchDiff ? 'flex' : 'none';
+            });
+        };
+
+        // Override filterSubject and filterDifficulty
+        window.filterSubject = function (btn, subject) {
+            document.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSubject = subject;
+            filterLessons(subject, currentDifficulty);
+        };
+
+        window.filterDifficulty = function (val) {
+            currentDifficulty = val;
+            filterLessons(currentSubject, val);
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load user info from localStorage
+            const displayName = localStorage.getItem('neurolearn_display_name') || 'Student';
+            document.getElementById('welcome-username').textContent = displayName;
+            document.getElementById('nav-username').textContent = displayName;
+            
+            loadLessonProgress();
+            if (typeof setActiveNav === 'function') setActiveNav();
+            if (typeof animateProgressBars === 'function') animateProgressBars();
+        });
+    </script>
+
 </body>
+
 </html>
