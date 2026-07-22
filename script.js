@@ -803,7 +803,7 @@ function applyTTS(enabled) {
     persistPreference('pref_tts', isEnabled ? 'true' : 'false');
     if (!isEnabled && typeof window.speechSynthesis !== 'undefined') {
         window.speechSynthesis.cancel();
-    }
+    } 
     return isEnabled;
 }
 
