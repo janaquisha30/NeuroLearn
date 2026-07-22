@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroLearn – Lesson</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .lesson-layout {
+            position: relative; z-index: 1;
+            display: grid;
+            grid-template-columns: 260px 1fr 280px;
+            gap: 24px;
+            padding: 32px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .lesson-sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .lesson-meta-card { text-align: center; padding: 28px 20px; }
+        .lesson-meta-card .subject-icon {
+            width: 72px; height: 72px;
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 14px;
+            border: 2px solid white;
+            box-shadow: 0 4px 14px rgba(110,198,245,0.35);
+        }
+        .lesson-meta-card .subject-icon.addition { background: linear-gradient(135deg, #C8E6C9, #A5D6A7); }
+        .lesson-meta-card .subject-icon.subtraction { background: linear-gradient(135deg, #B3E5FC, #81D4FA); }
+        .lesson-meta-card .subject-icon.plant { background: linear-gradient(135deg, #C8E6C9, #81C784); }
+        .lesson-meta-card .subject-icon.reading { background: linear-gradient(135deg, #FFE0B2, #FFCC80); }
+        .lesson-meta-card .subject-icon.ancient { background: linear-gradient(135deg, #E1BEE7, #CE93D8); }
+        .lesson-meta-card h2 { font-family: 'Baloo 2', cursive; font-size: 1.3rem; color: var(--teal); }
+        .lesson-meta-card p { font-size: 0.85rem; color: var(--text-mid); font-weight: 600; margin-top: 4px; }
+        .question-list { display: flex; flex-direction: column; gap: 8px; }
+        .q-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 700; font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-mid);
+            border: 1.5px solid transparent;
+        }
+        .q-item:hover { background: rgba(110,198,245,0.15); color: var(--teal); }
+        .q-item.active {
+            background: linear-gradient(135deg, rgba(46,140,140,0.12), rgba(110,198,245,0.15));
+            color: var(--teal); border-color: rgba(46,140,140,0.2);
+        }
+        .q-item.done { color: var(--green-dark); }
+        .q-item.wrong { color: var(--red); }
+        .q-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 800;
+            background: rgba(110,198,245,0.2);
+            border: 2px solid rgba(110,198,245,0.3);
+            flex-shrink: 0;
+        }
+        .q-item.active .q-dot { background: var(--teal); color: white; border-color: transparent; }
+        .q-item.done .q-dot { background: var(--green); color: white; border-color: transparent; }
+        .q-item.wrong .q-dot { background: var(--red); color: white; border-color: transparent; }
+        .question-area { display: flex; flex-direction: column; gap: 20px; }
+        .question-header { display: flex; align-items: center; justify-content: space-between; }
+        .q-counter { font-family: 'Baloo 2', cursive; font-size: 1rem; color: var(--text-mid); }
+        .timer-pill {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 16px;
+            background: rgba(255,140,66,0.12);
+            border: 1.5px solid rgba(255,140,66,0.25);
+            border-radius: 30px;
+            font-weight: 800; font-size: 0.92rem;
+            color: var(--orange);
+        }
+        .timer-pill.urgent { background: rgba(255,107,107,0.15); border-color: rgba(255,107,107,0.3); color: var(--red); animation: pulse 0.8s infinite; }
+        .question-card { padding: 36px 36px 30px; text-align: center; }
+        .question-text { font-family: 'Baloo 2', cursive; font-size: 2.8rem; color: var(--text-dark); margin-bottom: 8px; }
+        .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .choice-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 18px 22px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 2px solid rgba(110,198,245,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 1.3rem;
+            color: var(--text-dark);
+            box-shadow: var(--shadow);
+        }
+        .choice-btn:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .choice-btn.correct { background: linear-gradient(135deg, rgba(76,175,125,0.15), rgba(76,175,125,0.08)); border-color: var(--green); color: var(--green-dark); }
+        .choice-btn.wrong { background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,107,107,0.06)); border-color: var(--red); color: var(--red); }
+        .choice-btn:disabled { cursor: default; transform: none; }
+        .choice-letter {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 900;
+            background: rgba(110,198,245,0.2);
+            color: var(--teal);
+            flex-shrink: 0;
+        }
+        .feedback-banner {
+            border-radius: var(--radius-sm);
+            padding: 16px 22px;
+            display: flex; align-items: center; gap: 14px;
+            font-weight: 700; font-size: 0.95rem;
+            display: none;
+        }
+        .feedback-banner.correct { background: rgba(76,175,125,0.15); border: 1.5px solid rgba(76,175,125,0.4); color: var(--green-dark); }
+        .feedback-banner.wrong { background: rgba(255,107,107,0.12); border: 1.5px solid rgba(255,107,107,0.3); color: var(--red); }
+        .lesson-right { display: flex; flex-direction: column; gap: 20px; }
+        .score-ring-wrap { display: flex; flex-direction: column; align-items: center; padding: 28px 20px; }
+        .score-ring-wrap svg { transform: rotate(-90deg); }
+        .ring-label { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--teal); text-align: center; margin-top: -4px; }
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(30,58,76,0.4);
+            backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center;
+            z-index: 999;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 28px;
+            padding: 40px 48px;
+            text-align: center;
+            max-width: 440px; width: 90%;
+            box-shadow: 0 16px 60px rgba(30,58,76,0.25);
+            animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1);
+        }
+        .modal-trophy { font-size: 4rem; margin-bottom: 16px; }
+        .modal-stats { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; }
+    </style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a class="nav-logo" href="dashboard.html">NeuroLearn</a>
+    <div class="nav-center">
+        <a class="nav-tab" href="dashboard.html">🏠 Dashboard</a>
+        <a class="nav-tab active" href="lesson.html">📐 Lesson</a>
+        <a class="nav-tab" href="student-profile.html">👤 Student Profile</a>
+        <a class="nav-tab" href="parent-profile.html">👩 Parent Profile</a>
+        <a class="nav-tab" href="report.html">📋 Report</a>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn" title="Notifications" onclick="showToast('Notifications coming soon!')">🔔</button>
+        <a class="avatar-btn" href="student-profile.html">
+            <div class="avatar-circle">🧒</div>
+            <span id="lesson-username">Student</span>
+        </a>
+    </div>
+</nav>
+
+<div class="lesson-layout">
+    <aside class="lesson-sidebar">
+        <div class="card lesson-meta-card">
+            <div class="subject-icon" id="lesson-icon">➖</div>
+            <h2 id="lesson-title">Subtraction</h2>
+            <p id="lesson-desc">Math · Chapter 4 · Intermediate</p>
+            <div class="mt-12">
+                <div class="progress-bar-label"><span>Overall</span><span id="overall-pct">0%</span></div>
+                <div class="progress-bar"><div class="progress-fill blue" id="overall-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title"><span class="icon">📋</span> Questions</div>
+            <div class="question-list" id="q-list"></div>
+        </div>
+        <a class="btn btn-ghost" href="dashboard.html" style="justify-content:center;">← Back to Dashboard</a>
+    </aside>
+
+    <main class="question-area">
+        <div class="question-header">
+            <span class="q-counter">Question <strong id="q-num">1</strong> of <strong id="total-q">5</strong></span>
+            <div class="timer-pill" id="timer-pill">⏱ <span id="timer-val">30</span>s</div>
+        </div>
+        <div class="card question-card">
+            <div class="question-text" id="q-text">Loading...</div>
+        </div>
+        <div class="choices-grid" id="choices-grid"></div>
+        <div class="feedback-banner" id="feedback">
+            <div class="feedback-icon" id="fb-icon">✅</div>
+            <div><div style="font-size:1rem;" id="fb-title">Correct!</div></div>
+        </div>
+        <div class="lesson-nav-btns" style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn btn-ghost" onclick="prevQ()" id="btn-prev">← Previous</button>
+            <button class="btn btn-teal" onclick="nextQ()" id="btn-next" disabled>Next →</button>
+        </div>
+    </main>
+
+    <aside class="lesson-right">
+        <div class="card score-ring-wrap">
+            <div class="card-title" style="justify-content:center;"><span class="icon">⭐</span> Score</div>
+            <div id="difficulty-indicator" style="font-size:0.85rem;font-weight:700;color:var(--teal);margin-bottom:8px;">📊 Easy</div>
+            <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(110,198,245,0.2)" stroke-width="12"/>
+                <circle id="score-ring" cx="60" cy="60" r="50" fill="none" stroke="url(#grad2)" stroke-width="12" stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round"/>
+                <defs><linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#2E8C8C"/><stop offset="100%" style="stop-color:#6EC6F5"/></linearGradient></defs>
+            </svg>
+            <div class="ring-label" id="score-label">0/5<small>Score</small></div>
+            <div class="flex gap-12 mt-12">
+                <div class="stat-pill"><div class="val" id="correct-count">0</div><div class="lbl">Correct</div></div>
+                <div class="stat-pill"><div class="val" id="wrong-count">0</div><div class="lbl">Wrong</div></div>
+            </div>
+        </div>
+        <div class="card hint-card">
+            <div class="card-title"><span class="icon">💡</span> Tip</div>
+            <p id="hint-text">Start from the larger number and count down.</p>
+        </div>
+    </aside>
+</div>
+
+<div class="modal-overlay" id="result-modal">
+    <div class="modal-box">
+        <div class="modal-trophy" id="modal-trophy">🏆</div>
+        <h2 id="modal-title">Lesson Complete!</h2>
+        <p id="modal-msg">Great job!</p>
+        <div class="modal-stats">
+            <div class="stat-pill"><div class="val" id="modal-score">0</div><div class="lbl">Score</div></div>
+            <div class="stat-pill"><div class="val" id="modal-xp">+0</div><div class="lbl">XP Earned</div></div>
+        </div>
+        <div class="modal-btn-row" style="display: flex; gap: 12px; justify-content: center;">
+            <button class="btn btn-ghost" onclick="restartLesson()">↺ Retry</button>
+            <a class="btn btn-teal" href="dashboard.html">Dashboard →</a>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+<script src="lesson-data.js"></script>
+<script>
+    // LESSON DATA - All 5 Lessons
+    // Kept only for backwards-compatible source history. Active lesson data loads from lesson-data.js.
+    const LEGACY_LESSON_DATA = {
+        subtraction: {
+            title: "Subtraction",
+            subject: "Math · Chapter 4 · Intermediate",
+            icon: "➖",
+            iconClass: "subtraction",
+            totalQuestions: 5,
+            hint: "Start from the larger number and count down.",
+            questions: [
+                { text: '15 - 5 = ?', choices: [5, 10, 15, 20], correct: 1, hint: '15 minus 5 equals 10' },
+                { text: '20 - 8 = ?', choices: [10, 12, 14, 16], correct: 1, hint: '20 minus 8 equals 12' },
+                { text: '15 - 6 = ?', choices: [7, 8, 9, 10], correct: 2, hint: '15 minus 6 equals 9' },
+                { text: '30 - 14 = ?', choices: [14, 16, 18, 20], correct: 1, hint: '30 minus 14 equals 16' },
+                { text: '100 - 47 = ?', choices: [43, 53, 57, 63], correct: 1, hint: '100 minus 47 equals 53' }
+            ]
+        },
+        addition: {
+            title: "Addition",
+            subject: "Math · Chapter 3 · Beginner",
+            icon: "➕",
+            iconClass: "addition",
+            totalQuestions: 5,
+            hint: "Add the numbers together carefully.",
+            questions: [
+                { text: '5 + 3 = ?', choices: [6, 7, 8, 9], correct: 2, hint: '5 + 3 = 8' },
+                { text: '9 + 4 = ?', choices: [12, 13, 14, 15], correct: 1, hint: '9 + 4 = 13' },
+                { text: '12 + 7 = ?', choices: [17, 18, 19, 20], correct: 2, hint: '12 + 7 = 19' },
+                { text: '15 + 10 = ?', choices: [20, 25, 30, 35], correct: 1, hint: '15 + 10 = 25' },
+                { text: '23 + 16 = ?', choices: [37, 38, 39, 40], correct: 2, hint: '23 + 16 = 39' }
+            ]
+        },
+        plant: {
+            title: "Plant Life Cycle",
+            subject: "Science · Chapter 1 · Beginner",
+            icon: "🌱",
+            iconClass: "plant",
+            totalQuestions: 5,
+            hint: "Think about how plants grow from seeds to full-grown plants.",
+            questions: [
+                { text: 'What is the first stage of a plant\'s life cycle?', choices: ['Seed', 'Sprout', 'Flower', 'Fruit'], correct: 0, hint: 'It all starts with a tiny packet of life.' },
+                { text: 'What does a seed need to germinate?', choices: ['Sunlight only', 'Water and warmth', 'Fertilizer only', 'Just soil'], correct: 1, hint: 'Plants need water and the right temperature to start growing.' },
+                { text: 'What comes after a sprout in the plant life cycle?', choices: ['Seed', 'Seedling', 'Flower', 'Fruit'], correct: 1, hint: 'It grows bigger and develops leaves.' },
+                { text: 'What part of the plant makes food using sunlight?', choices: ['Roots', 'Stem', 'Leaves', 'Flowers'], correct: 2, hint: 'They are green and capture sunlight for photosynthesis.' },
+                { text: 'What is the final stage of a plant\'s life cycle?', choices: ['Seed', 'Sprout', 'Flower', 'Fruit and seeds'], correct: 3, hint: 'The plant reproduces and creates new seeds to start the cycle again.' }
+            ]
+        },
+        reading: {
+            title: "Story Comprehension",
+            subject: "Reading · Chapter 3 · Beginner",
+            icon: "📖",
+            iconClass: "reading",
+            totalQuestions: 5,
+            hint: "Read the story carefully and remember the details.",
+            questions: [
+                { text: 'What is the main character\'s name in the story?', choices: ['Maria', 'Juan', 'Ana', 'Pedro'], correct: 2, hint: 'The story starts with "Ana loved to read..."' },
+                { text: 'Where did the story take place?', choices: ['Park', 'Library', 'School', 'Home'], correct: 1, hint: 'It was a quiet place filled with books.' },
+                { text: 'What did the main character find in the library?', choices: ['A toy', 'A magical book', 'A friend', 'A map'], correct: 1, hint: 'It was a special book that glowed.' },
+                { text: 'How did the main character feel at the end of the story?', choices: ['Sad', 'Happy', 'Scared', 'Tired'], correct: 1, hint: 'She smiled and couldn\'t wait to read more.' },
+                { text: 'What is the moral of the story?', choices: ['Reading is boring', 'Reading can take you on adventures', 'Books are heavy', 'Reading is only for school'], correct: 1, hint: 'The story showed how books can transport you to new worlds.' }
+            ]
+        },
+        ancient: {
+            title: "Ancient Civilizations",
+            subject: "History · Chapter 2 · Intermediate",
+            icon: "🏛️",
+            iconClass: "ancient",
+            totalQuestions: 5,
+            hint: "Look for clues about rivers, leaders, inventions, and famous landmarks.",
+            questions: [
+                { text: 'Which ancient civilization built the pyramids of Giza?', choices: ['Romans', 'Egyptians', 'Greeks', 'Chinese'], correct: 1, hint: 'They lived along the Nile River.' },
+                { text: 'Mesopotamia was located between which two rivers?', choices: ['Nile and Amazon', 'Tigris and Euphrates', 'Yangtze and Yellow', 'Indus and Ganges'], correct: 1, hint: "Its name means 'land between rivers.'" },
+                { text: 'Which civilization is known as the birthplace of democracy?', choices: ['Egypt', 'Rome', 'Greece', 'China'], correct: 2, hint: 'Athens was one of its famous city-states.' },
+                { text: 'The Great Wall belongs to which civilization?', choices: ['Roman', 'Chinese', 'Persian', 'Greek'], correct: 1, hint: 'It was built to defend the empire.' },
+                { text: 'Which writing system was used by Ancient Egypt?', choices: ['Latin', 'Alphabet', 'Hieroglyphics', 'Cuneiform'], correct: 2, hint: 'Picture symbols carved on temples.' }
+            ]
+        }
+    };
+
+    const lessonKey = localStorage.getItem('currentLesson') || 'subtraction';
+    // Dashboard lesson keys are addition, subtraction, plant, reading, and ancient.
+    // Keep the committed inline data as a rendering fallback if the external bank
+    // is unavailable, so the original lesson UI never remains on "Loading…".
+    const activeLessonData = window.LESSON_DATA || LEGACY_LESSON_DATA;
+    const lesson = activeLessonData[lessonKey] || LEGACY_LESSON_DATA[lessonKey] || LEGACY_LESSON_DATA.subtraction;
+    const LETTERS = ['A', 'B', 'C', 'D'];
+
+    const lessonState = {
+        lessonId: lessonKey,
+        questions: [],
+        currentQuestion: 0,
+        selectedAnswers: [],
+        score: 0,
+        correct: 0,
+        incorrect: 0,
+        completed: false,
+        difficulty: 'easy',
+        timer: 30,
+        timerInt: null,
+        lessonDatabaseId: null,
+        adaptivePacingEnabled: localStorage.getItem('pref_adaptive') !== 'false',
+        ttsEnabled: window.__ttsEnabled === true || localStorage.getItem('pref_tts') === 'true',
+        dailyTimeLimitEnabled: localStorage.getItem('pref_time_limit') !== 'No limit',
+        responseTimes: [],
+        questionAttemptCount: 0,
+        questionStartedAt: 0,
+        correctStreak: 0,
+        wrongStreak: 0,
+        lastSpokenQuestionText: null
+    };
+
+    // --- Legacy lesson globals (required because current code below references these names directly) ---
+    // Root cause of "Loading..." is typically a ReferenceError from these undeclared globals.
+    // This keeps Supabase/TTS/adaptive behavior intact while we complete the state refactor safely.
+    let current = 0;
+    let questions = [];
+    let answers = [];
+    let correctCount = 0;
+    let wrongCount = 0;
+    let currentDifficulty = 'easy';
+    let adaptivePacingEnabled = lessonState.adaptivePacingEnabled;
+    let ttsEnabled = lessonState.ttsEnabled;
+    let dailyTimeLimitEnabled = lessonState.dailyTimeLimitEnabled;
+    let responseTimes = [];
+    let questionAttemptCount = 0;
+    let difficultyProgress = [];
+    let correctStreak = 0;
+    let wrongStreak = 0;
+    let lastResponseTime = 0;
+    let timerVal = 30;
+    let timerInt = null;
+    let lessonDatabaseId = null;
+
+    function difficultyIndex(difficulty) {
+        return ['easy', 'medium', 'hard'].indexOf(difficulty || 'easy');
+    }
+
+    function currentAccuracy() {
+        const attempts = correctCount + wrongCount;
+        return attempts ? correctCount / attempts : 0;
+    }
+
+    function getQuestionPool() {
+        const allQuestions = (lesson?.questions || []).slice();
+        if (!allQuestions.length) return [];
+        return allQuestions;
+    }
+
+    function selectQuestionsForSession() {
+        const pool = getQuestionPool();
+        const selected = [];
+        const used = new Set();
+        // Select 10 questions to give adaptive pacing room to work
+        const sessionSize = Math.min(10, pool.length);
+        while (selected.length < sessionSize) {
+            const available = pool.filter(q => !used.has(q.text));
+            if (!available.length) break;
+            const targetDifficulty = adaptivePacingEnabled ? currentDifficulty : null;
+            const preferred = targetDifficulty ? available.filter(q => (q.difficulty || 'easy') === targetDifficulty) : available;
+            const next = (preferred.length ? preferred : available)[Math.floor(Math.random() * (preferred.length || available.length))];
+            selected.push(next);
+            used.add(next.text);
+        }
+        return selected;
+    }
+
+    function initQuestions() {
+        questions = selectQuestionsForSession();
+        answers = new Array(questions.length).fill(null);
+        correctCount = 0;
+        wrongCount = 0;
+        responseTimes = [];
+        questionAttemptCount = 0;
+        difficultyProgress = [];
+        currentDifficulty = 'easy';
+        updateScore();
+        buildQuestionList();
+        renderQuestion(0);
+    }
+
+    function updateDifficultyDisplay() {
+        const indicator = document.getElementById('difficulty-indicator');
+        if (!indicator) return;
+        const labels = { easy: '🌱 Easy', medium: '📊 Medium', hard: '🔥 Hard' };
+        indicator.textContent = labels[currentDifficulty] || '🌱 Easy';
+        if (adaptivePacingEnabled) {
+            indicator.style.display = '';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+
+    function adaptUpcomingQuestions() {
+        if (!adaptivePacingEnabled || current >= questions.length - 1) {
+            updateDifficultyDisplay();
+            return;
+        }
+
+        const attempts = correctCount + wrongCount;
+        const avgResponseTime = responseTimes.length
+            ? responseTimes.reduce((sum, t) => sum + t, 0) / responseTimes.length
+            : 0;
+        const oldDifficulty = currentDifficulty;
+
+        // ----- Adaptive logic using streaks, accuracy, and response time -----
+        if (attempts >= 2) {
+            // 1. Streak-based adjustment: 3+ correct in a row -> increase difficulty
+            if (correctStreak >= 3) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.min(2, difficultyIndex(currentDifficulty) + 1)];
+                correctStreak = 0; // reset after adjustment
+            }
+            // 2. Streak-based adjustment: 2+ wrong in a row -> decrease difficulty
+            if (wrongStreak >= 2) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.max(0, difficultyIndex(currentDifficulty) - 1)];
+                wrongStreak = 0;
+            }
+            // 3. Accuracy-based: >=70% overall -> push harder (if not already pushed by streak)
+            if (currentAccuracy() >= 0.7 && difficultyIndex(currentDifficulty) < 2) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.min(2, difficultyIndex(currentDifficulty) + 1)];
+            }
+            // 4. Accuracy-based: <=30% overall -> easier
+            if (currentAccuracy() <= 0.3 && difficultyIndex(currentDifficulty) > 0) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.max(0, difficultyIndex(currentDifficulty) - 1)];
+            }
+            // 5. Response time: avg < 10s and accuracy >= 60% -> increase difficulty
+            if (attempts >= 3 && avgResponseTime < 10 && currentAccuracy() >= 0.6 && difficultyIndex(currentDifficulty) < 2) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.min(2, difficultyIndex(currentDifficulty) + 1)];
+            }
+            // 6. Response time: avg > 25s -> decrease difficulty (struggling)
+            if (attempts >= 3 && avgResponseTime > 25 && difficultyIndex(currentDifficulty) > 0) {
+                currentDifficulty = ['easy', 'medium', 'hard'][Math.max(0, difficultyIndex(currentDifficulty) - 1)];
+            }
+        }
+
+        // ----- Replace ALL remaining un-answered questions with questions at the new difficulty -----
+        const usedTexts = new Set(questions.slice(0, current + 1).map(q => q.text));
+        const pool = getQuestionPool();
+        const candidates = pool.filter(q => !usedTexts.has(q.text) && (q.difficulty || 'easy') === currentDifficulty);
+
+        // Fall back to any difficulty if not enough candidates at target
+        let replacements = candidates.length > 0 ? candidates : pool.filter(q => !usedTexts.has(q.text));
+        if (replacements.length === 0) {
+            updateDifficultyDisplay();
+            return;
+        }
+
+        for (let i = current + 1; i < questions.length; i++) {
+            // Pick a random replacement, avoiding duplicates within the remaining slots
+            const available = replacements.filter(q => !usedTexts.has(q.text));
+            if (available.length === 0) break;
+            const pick = available[Math.floor(Math.random() * available.length)];
+            questions[i] = pick;
+            usedTexts.add(pick.text);
+        }
+
+        buildQuestionList();
+
+        if (oldDifficulty !== currentDifficulty) {
+            showToast(`📊 Difficulty adjusted to ${currentDifficulty}!`, '#2E8C8C');
+        }
+        updateDifficultyDisplay();
+    }
+
+    // ---- HELPER: Wait for Supabase ----
+    function waitForSupabase() {
+        return new Promise((resolve) => {
+            if (typeof supabase !== 'undefined' && supabase && supabase.auth) {
+                resolve(supabase);
+                return;
+            }
+            if (typeof window.supabaseClient !== 'undefined' && window.supabaseClient && window.supabaseClient.auth) {
+                resolve(window.supabaseClient);
+                return;
+            }
+            setTimeout(() => waitForSupabase().then(resolve), 500);
+        });
+    }
+
+    // ---- GET LESSON ID FROM SUPABASE ----
+    async function getLessonId() {
+        try {
+            const supabaseClient = await waitForSupabase();
+            if (!supabaseClient) return null;
+            
+            const { data, error } = await supabaseClient
+                .from('lessons')
+                .select('id')
+                .eq('lesson_key', lessonKey)
+                .single();
+            
+            if (error) {
+                console.error('Error getting lesson ID:', error);
+                return null;
+            }
+            return data ? data.id : null;
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    // ---- SAVE PROGRESS TO SUPABASE ----
+    async function saveProgressToSupabase() {
+        try {
+            const supabaseClient = await waitForSupabase();
+            if (!supabaseClient) {
+                saveProgressToLocalStorage();
+                return;
+            }
+
+            // Get current user
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                saveProgressToLocalStorage();
+                return;
+            }
+
+            // Get lesson ID if not already cached
+            if (!lessonDatabaseId) {
+                lessonDatabaseId = await getLessonId();
+                if (!lessonDatabaseId) {
+                    saveProgressToLocalStorage();
+                    return;
+                }
+            }
+
+            const answeredCount = answers.filter(a => a !== null).length;
+            const performance = {
+                attempts: questionAttemptCount,
+                difficultyReached: currentDifficulty,
+                averageResponseTime: responseTimes.length ? Math.round(responseTimes.reduce((total, seconds) => total + seconds, 0) / responseTimes.length) : 0,
+                responseTimes: responseTimes
+            };
+            const progress = {
+                progress_percentage: Math.round((answeredCount / questions.length) * 100),
+                status: answers.every(a => a !== null) ? 'completed' : 'in_progress',
+                score: correctCount,
+                correct_count: correctCount,
+                wrong_count: wrongCount,
+                answers: { results: answers, performance: performance },
+                last_accessed: new Date().toISOString(),
+                completed_at: answers.every(a => a !== null) ? new Date().toISOString() : null
+            };
+
+            // Check if progress exists
+            const { data: existingProgress } = await supabaseClient
+                .from('user_progress')
+                .select('id')
+                .eq('user_id', user.id)
+                .eq('lesson_id', lessonDatabaseId)
+                .single();
+
+            let result;
+            if (existingProgress) {
+                // Update existing progress
+                result = await supabaseClient
+                    .from('user_progress')
+                    .update(progress)
+                    .eq('id', existingProgress.id);
+            } else {
+                // Insert new progress
+                result = await supabaseClient
+                    .from('user_progress')
+                    .insert({
+                        user_id: user.id,
+                        lesson_id: lessonDatabaseId,
+                        ...progress
+                    });
+            }
+
+            if (result.error) {
+                console.error('Error saving to Supabase:', result.error);
+            } else {
+                console.log('✅ Progress saved to Supabase');
+            }
+
+            // Also save to localStorage as backup
+            saveProgressToLocalStorage();
+
+        } catch (error) {
+            console.error('Error saving progress:', error);
+            saveProgressToLocalStorage();
+        }
+    }
+
+    // ---- SAVE PROGRESS TO LOCALSTORAGE (BACKUP) ----
+    function saveProgressToLocalStorage() {
+        const progress = {
+            answers: answers,
+            correctCount: correctCount,
+            wrongCount: wrongCount,
+            completed: answers.every(a => a !== null),
+            performance: {
+                attempts: questionAttemptCount,
+                difficultyReached: currentDifficulty,
+                averageResponseTime: responseTimes.length ? Math.round(responseTimes.reduce((total, seconds) => total + seconds, 0) / responseTimes.length) : 0,
+                responseTimes: responseTimes
+            }
+        };
+        localStorage.setItem(`progress_${lessonKey}`, JSON.stringify(progress));
+        
+        let pct = Math.round((answers.filter(a => a !== null).length / questions.length) * 100);
+        if (pct > 100) pct = 100;
+        localStorage.setItem(`progress_${lessonKey}_pct`, pct);
+    }
+
+    // ---- LOAD PROGRESS FROM SUPABASE ----
+    async function loadProgressFromSupabase() {
+        try {
+            const supabaseClient = await waitForSupabase();
+            if (!supabaseClient) {
+                loadProgressFromLocalStorage();
+                return;
+            }
+
+            // Get current user
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                loadProgressFromLocalStorage();
+                return;
+            }
+
+            // Get lesson ID
+            if (!lessonDatabaseId) {
+                lessonDatabaseId = await getLessonId();
+                if (!lessonDatabaseId) {
+                    loadProgressFromLocalStorage();
+                    return;
+                }
+            }
+
+            // Get progress from Supabase
+            const { data: progress, error } = await supabaseClient
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('lesson_id', lessonDatabaseId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error loading progress:', error);
+                loadProgressFromLocalStorage();
+                return;
+            }
+
+            if (progress) {
+                const savedAnswers = Array.isArray(progress.answers) ? progress.answers : (progress.answers?.results || []);
+                // Only load answers if they match current question count
+                if (savedAnswers.length === questions.length) {
+                    // Migrate old boolean-format answers to index-format
+                    answers = savedAnswers.map((ans, i) => {
+                        if (typeof ans === 'boolean') return ans ? questions[i].correct : -1;
+                        return ans;
+                    });
+                    correctCount = progress.correct_count || 0;
+                    wrongCount = progress.wrong_count || 0;
+                } else {
+                    answers = new Array(questions.length).fill(null);
+                    correctCount = 0;
+                    wrongCount = 0;
+                }
+                questionAttemptCount = progress.answers?.performance?.attempts || correctCount + wrongCount;
+                currentDifficulty = progress.answers?.performance?.difficultyReached || currentDifficulty;
+                responseTimes = progress.answers?.performance?.responseTimes || [];
+                updateScore();
+                
+                document.querySelectorAll('.q-item').forEach((el, i) => {
+                    if (answers[i] !== null) {
+                        const qItem = questions[i];
+                        if (qItem && answers[i] === qItem.correct) el.classList.add('done');
+                        else el.classList.add('wrong');
+                    }
+                });
+                // Re-render current question to reflect loaded state
+                renderQuestion(current);
+                
+                console.log('✅ Progress loaded from Supabase');
+            } else {
+                // No progress in Supabase, check localStorage
+                loadProgressFromLocalStorage();
+            }
+
+        } catch (error) {
+            console.error('Error loading progress:', error);
+            loadProgressFromLocalStorage();
+        }
+    }
+
+    // ---- LOAD PROGRESS FROM LOCALSTORAGE (BACKUP) ----
+    function loadProgressFromLocalStorage() {
+        const saved = localStorage.getItem(`progress_${lessonKey}`);
+        if (saved) {
+            try {
+                const progress = JSON.parse(saved);
+                // Only load answers if they match current question count
+                const savedAnswers = progress.answers || [];
+                if (savedAnswers.length === questions.length) {
+                    // Migrate old boolean-format answers to index-format
+                    answers = savedAnswers.map((ans, i) => {
+                        if (typeof ans === 'boolean') return ans ? questions[i].correct : -1;
+                        return ans;
+                    });
+                    correctCount = progress.correctCount || 0;
+                    wrongCount = progress.wrongCount || 0;
+                } else {
+                    answers = new Array(questions.length).fill(null);
+                    correctCount = 0;
+                    wrongCount = 0;
+                }
+                questionAttemptCount = progress.performance?.attempts || correctCount + wrongCount;
+                currentDifficulty = progress.performance?.difficultyReached || currentDifficulty;
+                responseTimes = progress.performance?.responseTimes || [];
+                updateScore();
+                
+                document.querySelectorAll('.q-item').forEach((el, i) => {
+                    if (answers[i] !== null) {
+                        const qItem = questions[i];
+                        if (qItem && answers[i] === qItem.correct) el.classList.add('done');
+                        else el.classList.add('wrong');
+                    }
+                });
+                // Re-render current question to reflect loaded state
+                renderQuestion(current);
+            } catch(e) {
+                console.log('No saved progress found in localStorage');
+            }
+        }
+    }
+
+    // ---- CLEAR PROGRESS FROM SUPABASE ----
+    async function clearProgressFromSupabase() {
+        try {
+            const supabaseClient = await waitForSupabase();
+            if (!supabaseClient) return;
+            
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+            
+            if (!lessonDatabaseId) {
+                lessonDatabaseId = await getLessonId();
+                if (!lessonDatabaseId) return;
+            }
+            
+            await supabaseClient
+                .from('user_progress')
+                .delete()
+                .eq('user_id', user.id)
+                .eq('lesson_id', lessonDatabaseId);
+                
+            console.log('✅ Progress cleared from Supabase');
+        } catch (error) {
+            console.error('Error clearing progress:', error);
+        }
+    }
+
+    // Initialize lesson
+    async function initLesson() {
+        adaptivePacingEnabled = window.__adaptivePacingEnabled !== false && localStorage.getItem('pref_adaptive') !== 'false';
+        ttsEnabled = window.__ttsEnabled === true || localStorage.getItem('pref_tts') === 'true';
+        dailyTimeLimitEnabled = localStorage.getItem('pref_time_limit') !== 'No limit';
+
+        document.getElementById('lesson-title').textContent = lesson.title;
+        document.getElementById('lesson-desc').textContent = lesson.subject;
+        document.getElementById('total-q').textContent = lesson.totalQuestions;
+        document.getElementById('hint-text').textContent = lesson.hint;
+        
+        const iconDiv = document.getElementById('lesson-icon');
+        iconDiv.textContent = lesson.icon;
+        iconDiv.className = 'subject-icon ' + lesson.iconClass;
+        
+        initQuestions();
+        
+        // If this is a fresh retake (not a page reload), skip loading old progress
+        const isFreshRetake = sessionStorage.getItem('freshRetake_' + lessonKey) === 'true';
+        if (isFreshRetake) {
+            sessionStorage.removeItem('freshRetake_' + lessonKey);
+            console.log('🔄 Fresh retake session — skipping saved progress load');
+        } else {
+            await loadProgressFromSupabase();
+        }
+    }
+
+    function buildQuestionList() {
+        const container = document.getElementById('q-list');
+        container.innerHTML = '';
+        questions.forEach((q, i) => {
+            const div = document.createElement('div');
+            div.className = 'q-item';
+            div.onclick = () => goToQ(i);
+            div.innerHTML = `<div class="q-dot">${i+1}</div>${q.text.split('?')[0]}`;
+            container.appendChild(div);
+        });
+    }
+
+    function renderQuestion(idx) {
+        const q = questions[idx];
+        document.getElementById('q-num').textContent = idx + 1;
+        document.getElementById('q-text').textContent = q.text;
+        document.getElementById('hint-text').textContent = q.hint;
+        
+        if (q && q.text && (window.__ttsEnabled === true || localStorage.getItem('pref_tts') === 'true')) {
+            setTimeout(() => speakText(q.text), 250);
+        }
+        
+        const grid = document.getElementById('choices-grid');
+        grid.innerHTML = '';
+        const answered = answers[idx] !== null && answers[idx] !== undefined;
+        q.choices.forEach((val, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerHTML = `<div class="choice-letter">${LETTERS[i]}</div><span>${val}</span>`;
+            if (answered) {
+                // Only disable and highlight AFTER the student has answered
+                btn.disabled = true;
+                if (i === q.correct) btn.classList.add('correct');
+                else if (answers[idx] === i) btn.classList.add('wrong');
+            } else {
+                btn.onclick = () => answer(i);
+            }
+            grid.appendChild(btn);
+        });
+        
+        document.getElementById('feedback').style.display = 'none';
+        
+        document.querySelectorAll('.q-item').forEach((el, i) => {
+            el.classList.remove('active', 'done', 'wrong');
+            if (i === idx) el.classList.add('active');
+            else if (answers[i] !== null && answers[i] !== undefined) {
+                // Determine if the answer was correct by comparing to the question's correct index
+                const qItem = questions[i];
+                if (qItem && answers[i] === qItem.correct) el.classList.add('done');
+                else el.classList.add('wrong');
+            }
+        });
+        
+        document.getElementById('btn-prev').disabled = idx === 0;
+        document.getElementById('btn-next').disabled = answers[idx] === null || answers[idx] === undefined;
+        questionStartedAt = Date.now();
+        resetTimer();
+    }
+
+    async function answer(choiceIdx) {
+        const q = questions[current];
+        const isCorrect = choiceIdx === q.correct;
+        // Store the chosen index (not a boolean) so renderQuestion can compare correctly
+        answers[current] = choiceIdx;
+        lastResponseTime = Math.max(1, Math.round((Date.now() - questionStartedAt) / 1000));
+        responseTimes.push(lastResponseTime);
+        questionAttemptCount++;
+        
+        document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+            btn.disabled = true;
+            if (i === q.correct) btn.classList.add('correct');
+            else if (i === choiceIdx && !isCorrect) btn.classList.add('wrong');
+        });
+        
+        if (isCorrect) { 
+            correctCount++;
+            correctStreak++;
+            wrongStreak = 0;
+            showToast('✅ Correct! +10 XP');
+        } else { 
+            wrongCount++;
+            wrongStreak++;
+            correctStreak = 0;
+            showToast('❌ Not quite!');
+        }
+        
+        difficultyProgress.push({ difficulty: q.difficulty || 'easy', correct: isCorrect, responseTime: lastResponseTime });
+        adaptUpcomingQuestions();
+        updateScore();
+        document.getElementById('btn-next').disabled = false;
+        clearInterval(timerInt);
+        
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'flex';
+        fb.className = 'feedback-banner ' + (isCorrect ? 'correct' : 'wrong');
+        document.getElementById('fb-icon').textContent = isCorrect ? '✅' : '❌';
+        document.getElementById('fb-title').textContent = isCorrect ? 'Correct!' : 'Not quite!';
+        
+        const items = document.querySelectorAll('.q-item');
+        items[current].classList.remove('active');
+        items[current].classList.add(isCorrect ? 'done' : 'wrong');
+        
+        // Save progress to Supabase
+        await saveProgressToSupabase();
+    }
+
+    function updateScore() {
+        document.getElementById('correct-count').textContent = correctCount;
+        document.getElementById('wrong-count').textContent = wrongCount;
+        const answered = answers.filter(a => a !== null).length;
+        document.getElementById('score-label').innerHTML = `${correctCount}/${answered || 1}<small>Score</small>`;
+        const pct = questions.length ? correctCount / questions.length : 0;
+        document.getElementById('score-ring').style.strokeDashoffset = 314 - (314 * pct);
+        
+        // Cap overall progress at 100%
+        let ovPct = Math.round((answered / questions.length) * 100);
+        if (ovPct > 100) ovPct = 100;
+        document.getElementById('overall-bar').style.width = ovPct + '%';
+        document.getElementById('overall-pct').textContent = ovPct + '%';
+    }
+
+    function nextQ() {
+        if (checkDailyTimeLimit()) {
+            showToast('Daily time limit reached. Come back tomorrow!', '#FF8C42');
+            return;
+        }
+        if (current < questions.length - 1) {
+            current++;
+            renderQuestion(current);
+        } else {
+            finishLesson();
+        }
+    }
+
+    function prevQ() {
+        if (current > 0) {
+            current--;
+            renderQuestion(current);
+        }
+    }
+
+    function markLessonTimeUsage() {
+        updateDailyLearningSeconds(1);
+        if (checkDailyTimeLimit()) {
+            showToast('Daily time limit reached. Come back tomorrow!', '#FF8C42');
+        }
+    }
+
+    function goToQ(idx) {
+        if (idx <= current) {
+            current = idx;
+            renderQuestion(current);
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(timerInt);
+        timerVal = adaptivePacingEnabled && currentAccuracy() < 0.5 && (correctCount + wrongCount) >= 2 ? 45 : 30;
+        const pill = document.getElementById('timer-pill');
+        const val = document.getElementById('timer-val');
+        pill.classList.remove('urgent');
+        val.textContent = timerVal;
+        
+        if (answers[current] !== null) return;
+        
+        timerInt = setInterval(() => {
+            timerVal--;
+            val.textContent = timerVal;
+            markLessonTimeUsage();
+            if (timerVal <= 10) pill.classList.add('urgent');
+            if (timerVal <= 0) {
+                clearInterval(timerInt);
+                if (answers[current] === null) {
+                    // Store -1 to indicate the question was answered (timed out) but not with a valid choice
+                    answers[current] = -1;
+                    wrongCount++;
+                    questionAttemptCount++;
+                    lastResponseTime = timerVal;
+                    responseTimes.push(lastResponseTime);
+                    difficultyProgress.push({ difficulty: questions[current].difficulty || 'easy', correct: false, responseTime: lastResponseTime });
+                    adaptUpcomingQuestions();
+                    updateScore();
+                    document.getElementById('btn-next').disabled = false;
+                    document.querySelectorAll('.choice-btn').forEach((b, i) => {
+                        b.disabled = true;
+                        if (i === questions[current].correct) b.classList.add('correct');
+                    });
+                    showToast('⏰ Time\'s up!');
+                    saveProgressToSupabase();
+                }
+            }
+        }, 1000);
+    }
+
+    function finishLesson() {
+        clearInterval(timerInt);
+        const pct = Math.round((correctCount / questions.length) * 100);
+        document.getElementById('modal-trophy').textContent = pct >= 80 ? '🏆' : pct >= 50 ? '⭐' : '📚';
+        document.getElementById('modal-title').textContent = pct >= 80 ? 'Excellent Work!' : pct >= 50 ? 'Good Effort!' : 'Keep Practicing!';
+        document.getElementById('modal-msg').textContent = `You scored ${correctCount} out of ${questions.length} on ${lesson.title}!`;
+        document.getElementById('modal-score').textContent = `${correctCount}/${questions.length}`;
+        document.getElementById('modal-xp').textContent = '+' + (correctCount * 10);
+        document.getElementById('result-modal').classList.add('show');
+    }
+
+    async function restartLesson() {
+        if (confirm(`Are you sure you want to restart the ${lesson.title} lesson? This will reset your progress.`)) {
+            document.getElementById('result-modal').classList.remove('show');
+            // Fully reset all active attempt state
+            // NOTE: Historical Supabase progress is preserved (not deleted)
+            current = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            correctStreak = 0;
+            wrongStreak = 0;
+            responseTimes = [];
+            questionAttemptCount = 0;
+            difficultyProgress = [];
+            currentDifficulty = 'easy';
+            // Explicitly clear answers array before regenerating
+            answers = [];
+            // Regenerate questions for a completely fresh session
+            initQuestions();
+            updateScore();
+            
+            // Only clear local session cache — keep historical Supabase records
+            localStorage.removeItem(`progress_${lessonKey}`);
+            localStorage.removeItem(`progress_${lessonKey}_pct`);
+            
+            // Set a session flag so the page reload doesn't restore old Supabase progress
+            sessionStorage.setItem('freshRetake_' + lessonKey, 'true');
+            
+            showToast('🔄 Progress reset! Starting from the beginning.');
+        }
+    }
+
+    // --- Startup guard so init errors don't leave the page stuck on "Loading..." ---
+    (async function bootLesson() {
+        console.log('🧩 Lesson page loaded');
+        console.log('Lesson key:', lessonKey);
+        console.log('LESSON_DATA exists:', typeof window.LESSON_DATA !== 'undefined');
+        console.log('Lesson title:', lesson?.title);
+        console.log('Lesson questions length:', lesson?.questions?.length);
+
+        try {
+            console.log('Starting initLesson()...');
+            await initLesson();
+            console.log('✅ initLesson() finished');
+        } catch (e) {
+            console.error('❌ initLesson() failed:', e);
+            const qText = document.getElementById('q-text');
+            if (qText) qText.textContent = 'Error loading lesson. Check console for details.';
+            const grid = document.getElementById('choices-grid');
+            if (grid) grid.innerHTML = '';
+            const totalEl = document.getElementById('total-q');
+            if (totalEl) totalEl.textContent = lesson?.totalQuestions || '0';
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var displayName = localStorage.getItem('neurolearn_display_name') || 'Student';
+        document.getElementById('lesson-username').textContent = displayName;
+        adaptivePacingEnabled = localStorage.getItem('pref_adaptive') !== 'false';
+        ttsEnabled = window.__ttsEnabled === true || localStorage.getItem('pref_tts') === 'true';
+        dailyTimeLimitEnabled = localStorage.getItem('pref_time_limit') !== 'No limit';
+    });
+</script>
+</body>
+</html>
