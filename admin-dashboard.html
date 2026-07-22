@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroLearn – Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* =============================================
+           Admin Dashboard – Additional Styles
+           ============================================= */
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 270px 1fr;
+            gap: 24px;
+            padding: 28px 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .admin-sidebar .card { padding: 18px 14px; }
+        .admin-sidebar .card-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.9rem;
+            color: var(--text-mid);
+            padding: 0 8px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .admin-nav-items { display: flex; flex-direction: column; gap: 3px; }
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            background: none;
+            width: 100%;
+            font-family: 'Nunito', sans-serif;
+            text-align: left;
+        }
+        .admin-nav-item:hover { background: rgba(110,198,245,0.15); color: var(--teal); }
+        .admin-nav-item.active {
+            background: linear-gradient(135deg, rgba(46,140,140,0.12), rgba(110,198,245,0.15));
+            color: var(--teal);
+            border-color: rgba(46,140,140,0.2);
+        }
+        .admin-nav-item .ani-icon {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            background: rgba(110,198,245,0.18);
+            flex-shrink: 0;
+        }
+        .admin-nav-item.active .ani-icon {
+            background: linear-gradient(135deg, var(--teal), var(--sky-dark));
+            box-shadow: 0 3px 10px rgba(46,140,140,0.3);
+            color: white;
+        }
+        .admin-nav-item .ani-label { flex: 1; }
+        .admin-nav-item.logout-item {
+            margin-top: 8px;
+            border-top: 1.5px solid rgba(110,198,245,0.15);
+            padding-top: 14px;
+            color: var(--red);
+        }
+        .admin-nav-item.logout-item:hover {
+            background: rgba(255,107,107,0.1);
+            border-color: rgba(255,107,107,0.2);
+            color: var(--red);
+        }
+        .admin-main { display: flex; flex-direction: column; gap: 24px; }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: flex; flex-direction: column; gap: 24px; }
+        .admin-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .admin-panel-header h2 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        .admin-panel-header p { color: var(--text-mid); font-size: 0.88rem; font-weight: 600; }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .analytics-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 22px 20px;
+            box-shadow: var(--shadow);
+            border: 1.5px solid rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .analytics-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .analytics-card .ac-icon {
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .analytics-card .ac-icon.teal { background: linear-gradient(135deg, var(--teal), var(--sky-dark)); }
+        .analytics-card .ac-icon.green { background: linear-gradient(135deg, var(--green), var(--teal)); }
+        .analytics-card .ac-icon.orange { background: linear-gradient(135deg, var(--yellow), var(--orange)); }
+        .analytics-card .ac-icon.purple { background: linear-gradient(135deg, var(--purple), var(--sky-dark)); }
+        .analytics-card .ac-icon.red { background: linear-gradient(135deg, var(--red), var(--orange)); }
+        .analytics-card .ac-icon.blue { background: linear-gradient(135deg, var(--sky-dark), var(--sky)); }
+        .analytics-card .ac-info h3 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.6rem;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+        .analytics-card .ac-info p { font-size: 0.8rem; font-weight: 700; color: var(--text-light); margin-top: 2px; }
+
+        .admin-table-wrap {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1.5px solid rgba(255,255,255,0.85);
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+        .admin-table-toolbar {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1.5px solid rgba(110,198,245,0.15);
+            flex-wrap: wrap;
+        }
+        .admin-table-toolbar .search-input {
+            flex: 1; min-width: 200px;
+            padding: 10px 16px;
+            border: 2px solid var(--sky-light);
+            border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--text-dark);
+            background: rgba(232,248,255,0.5);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .admin-table-toolbar .search-input:focus { border-color: var(--sky-dark); background: #fff; }
+        .admin-table-toolbar .search-input::placeholder { color: var(--text-light); }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table thead th {
+            padding: 14px 18px; text-align: left;
+            font-size: 0.78rem; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(110,198,245,0.06);
+            border-bottom: 1.5px solid rgba(110,198,245,0.12);
+        }
+        .admin-table tbody td {
+            padding: 13px 18px;
+            font-size: 0.88rem; font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 1px solid rgba(110,198,245,0.08);
+        }
+        .admin-table tbody tr:last-child td { border-bottom: none; }
+        .admin-table tbody tr:hover { background: rgba(110,198,245,0.04); }
+        .admin-table .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+        .admin-table .actions-cell .btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 800;
+        }
+        .status-badge.active { background: rgba(76,175,125,0.12); color: var(--green-dark); }
+        .status-badge.inactive { background: rgba(255,107,107,0.12); color: var(--red); }
+        .status-badge.pending { background: rgba(255,140,66,0.12); color: var(--orange); }
+
+        .upload-zone {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 2.5px dashed var(--sky-light);
+            padding: 48px 32px; text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+        .upload-zone:hover, .upload-zone.drag-over { border-color: var(--teal); background: rgba(46,140,140,0.05); }
+        .upload-zone .upload-icon { font-size: 3.2rem; margin-bottom: 12px; }
+        .upload-zone h3 { font-family: 'Baloo 2', cursive; font-size: 1.2rem; color: var(--text-dark); margin-bottom: 4px; }
+        .upload-zone p { font-size: 0.85rem; color: var(--text-light); font-weight: 600; }
+        .upload-zone .upload-btn-wrapper { margin-top: 16px; }
+        .upload-zone input[type="file"] { display: none; }
+        .upload-info { display: none; background: var(--card-bg); border-radius: var(--radius-sm); padding: 18px 22px; box-shadow: var(--shadow); border: 1.5px solid rgba(255,255,255,0.85); backdrop-filter: blur(8px); }
+        .upload-info.show { display: block; }
+        .upload-info .file-name { font-weight: 800; font-size: 0.95rem; color: var(--text-dark); }
+        .upload-info .file-size { font-size: 0.82rem; font-weight: 600; color: var(--text-light); margin-top: 2px; }
+        .upload-info .progress-container { margin-top: 12px; }
+        .upload-info .progress-container .progress-bar { height: 10px; border-radius: 10px; }
+        .upload-info .progress-container .progress-fill { width: 0%; transition: width 0.4s ease; }
+        .upload-info .upload-status { margin-top: 10px; font-weight: 700; font-size: 0.88rem; }
+        .upload-info .upload-status.success { color: var(--green-dark); }
+        .upload-info .upload-status.error { color: var(--red); }
+
+        .file-type-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
+        .file-type-tag { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; background: rgba(110,198,245,0.12); color: var(--text-mid); border: 1px solid rgba(110,198,245,0.2); }
+
+        .recent-uploads-list { display: flex; flex-direction: column; gap: 8px; }
+        .recent-upload-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px;
+            background: rgba(110,198,245,0.06);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(110,198,245,0.1);
+        }
+        .recent-upload-item .ru-icon { font-size: 1.2rem; }
+        .recent-upload-item .ru-info { flex: 1; }
+        .recent-upload-item .ru-info h4 { font-size: 0.85rem; font-weight: 800; color: var(--text-dark); }
+        .recent-upload-item .ru-info p { font-size: 0.72rem; font-weight: 600; color: var(--text-light); }
+
+        .settings-group { display: flex; flex-direction: column; gap: 14px; }
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            border: 1.5px solid rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+        }
+        .settings-row .settings-label { font-weight: 700; font-size: 0.92rem; color: var(--text-dark); }
+        .settings-row .settings-desc { font-size: 0.78rem; color: var(--text-light); font-weight: 600; }
+
+        .conn-indicator {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            transition: all 0.3s;
+            margin-right: 8px;
+        }
+
+        .auth-guard-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(160deg, #6EC6F5 0%, #B8E4FA 40%, #E0F7FA 70%, #A8E6C3 100%);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .auth-guard-overlay h2 { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--teal); }
+        .auth-guard-overlay .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(46,140,140,0.2);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 1200px) {
+            .admin-layout { grid-template-columns: 230px 1fr; padding: 20px 24px; gap: 18px; }
+        }
+        @media (max-width: 960px) {
+            .admin-layout { grid-template-columns: 1fr; padding: 16px; }
+            .admin-sidebar { display: none; }
+            .admin-sidebar.mobile-show {
+                display: flex;
+                position: fixed; top: 70px; left: 0; right: 0; bottom: 0;
+                z-index: 200;
+                background: rgba(255,255,255,0.97);
+                backdrop-filter: blur(12px);
+                padding: 20px;
+                overflow-y: auto;
+            }
+            .analytics-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .admin-table thead { display: none; }
+            .admin-table tbody tr { display: block; padding: 14px; border-bottom: 1px solid rgba(110,198,245,0.1); }
+            .admin-table tbody td { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: none; font-size: 0.82rem; }
+            .admin-table tbody td::before { content: attr(data-label); font-weight: 700; color: var(--text-light); font-size: 0.75rem; text-transform: uppercase; }
+        }
+        @media (max-width: 600px) {
+            .analytics-grid { grid-template-columns: 1fr 1fr; }
+            .admin-panel-header { flex-direction: column; align-items: flex-start; }
+        }
+        .hamburger-btn { display: none; width: 40px; height: 40px; border-radius: 10px; border: none; background: rgba(110,198,245,0.15); cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; color: var(--text-mid); }
+        @media (max-width: 960px) { .hamburger-btn { display: flex; } }
+    </style>
+</head>
+<body>
+
+    <!-- ========== AUTH GUARD OVERLAY ========== -->
+    <div class="auth-guard-overlay" id="auth-guard">
+        <div class="spinner"></div>
+        <h2>Verifying access...</h2>
+    </div>
+
+    <!-- ========== TOP NAV ========== -->
+    <nav class="topnav" id="admin-topnav" style="display:none;">
+        <a class="nav-logo" href="dashboard.html">NeuroLearn</a>
+        <div class="nav-center">
+            <a class="nav-tab" href="dashboard.html">🏠 Dashboard</a>
+            <a class="nav-tab" href="lesson.html">📐 Lesson</a>
+            <a class="nav-tab" href="student-profile.html">👤 Student Profile</a>
+            <a class="nav-tab" href="parent-profile.html">👩 Parent Profile</a>
+            <a class="nav-tab" href="report.html">📋 Report</a>
+            <a class="nav-tab active" href="admin-dashboard.html">⚙️ Admin</a>
+        </div>
+        <div class="nav-right">
+            <button class="hamburger-btn" id="admin-hamburger" onclick="toggleMobileSidebar()" aria-label="Toggle sidebar">☰</button>
+            <button class="icon-btn" title="Notifications" onclick="showToast('Admin notifications coming soon!')" aria-label="Notifications">🔔</button>
+            <a class="avatar-btn" href="student-profile.html" aria-label="User profile">
+                <div class="avatar-circle">👩‍💼</div>
+                <span id="admin-username">Admin</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ========== ADMIN LAYOUT ========== -->
+    <div class="admin-layout" id="admin-layout" style="display:none;">
+
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar" role="navigation" aria-label="Admin navigation">
+            <div class="card">
+                <div class="card-title"><span class="icon">⚙️</span> Admin Panel</div>
+                <div class="admin-nav-items">
+                    <button class="admin-nav-item active" data-panel="dashboard-panel" onclick="switchAdminPanel('dashboard-panel', this)" aria-current="page"><div class="ani-icon">📊</div><span class="ani-label">Dashboard</span></button>
+                    <button class="admin-nav-item" data-panel="students-panel" onclick="switchAdminPanel('students-panel', this)"><div class="ani-icon">👨‍🎓</div><span class="ani-label">Students</span></button>
+                    <button class="admin-nav-item" data-panel="parents-panel" onclick="switchAdminPanel('parents-panel', this)"><div class="ani-icon">👩‍👧</div><span class="ani-label">Parents</span></button>
+                    <button class="admin-nav-item" data-panel="lessons-panel" onclick="switchAdminPanel('lessons-panel', this)"><div class="ani-icon">📚</div><span class="ani-label">Lessons</span></button>
+                    <button class="admin-nav-item" data-panel="uploads-panel" onclick="switchAdminPanel('uploads-panel', this)"><div class="ani-icon">📤</div><span class="ani-label">Uploads</span></button>
+                    <button class="admin-nav-item" data-panel="analytics-panel" onclick="switchAdminPanel('analytics-panel', this)"><div class="ani-icon">📈</div><span class="ani-label">Analytics</span></button>
+                    <button class="admin-nav-item" data-panel="settings-panel" onclick="switchAdminPanel('settings-panel', this)"><div class="ani-icon">⚙️</div><span class="ani-label">Settings</span></button>
+                    <button class="admin-nav-item logout-item" onclick="logoutAdmin()"><div class="ani-icon">🚪</div><span class="ani-label">Logout</span></button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="icon">💾</span> Supabase</div>
+                <div style="padding:6px 0;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span class="conn-indicator" id="conn-indicator"></span>
+                        <span style="font-size:0.82rem;font-weight:700;color:var(--text-mid);" id="conn-text">Checking...</span>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-family:'Baloo 2',cursive;font-size:1.5rem;color:var(--teal);" id="storage-used-display">—</div>
+                        <div style="font-size:0.75rem;font-weight:700;color:var(--text-light);">Storage Used</div>
+                        <div class="progress-bar mt-8" style="height:8px;"><div class="progress-fill green" id="storage-bar" style="width:0%;"></div></div>
+                        <div style="font-size:0.72rem;font-weight:700;color:var(--text-light);margin-top:4px;" id="storage-detail">—</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" role="main">
+
+            <!-- DASHBOARD PANEL -->
+            <section class="admin-panel active" id="dashboard-panel" aria-label="Admin Dashboard">
+                <div class="admin-panel-header">
+                    <div>
+                        <h2>Admin Dashboard</h2>
+                        <p>Welcome back, <strong id="admin-welcome-name">Admin</strong>! Here's your overview.</p>
+                    </div>
+                    <button class="btn btn-teal btn-sm" onclick="adminLoadDashboard(); adminLoadRecentActivity();" aria-label="Refresh dashboard">🔄 Refresh</button>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytics-card"><div class="ac-icon teal">👨‍🎓</div><div class="ac-info"><h3 id="stat-total-students">—</h3><p>Total Students</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon purple">👩‍👧</div><div class="ac-info"><h3 id="stat-total-parents">—</h3><p>Total Parents</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon green">📚</div><div class="ac-info"><h3 id="stat-total-lessons">—</h3><p>Lessons</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon blue">✅</div><div class="ac-info"><h3 id="stat-completed-lessons">—</h3><p>Completed Lessons</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon red">⭐</div><div class="ac-info"><h3 id="stat-avg-score">—</h3><p>Average Score</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon orange">🔥</div><div class="ac-info"><h3 id="stat-daily-xp">—</h3><p>Daily XP</p></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">🕐</span> Recent Activity</div>
+                    <div class="recent-uploads-list" id="recent-activity-list">
+                        <p style="color:var(--text-light);font-size:0.85rem;font-weight:600;text-align:center;padding:20px;">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STUDENTS PANEL -->
+            <section class="admin-panel" id="students-panel" aria-label="Student Management">
+                <div class="admin-panel-header">
+                    <div><h2>Student Management</h2><p>View all enrolled students with their progress.</p></div>
+                    <button class="btn btn-green btn-sm" onclick="adminLoadStudents()" aria-label="Refresh">🔄 Refresh</button>
+                </div>
+                <div class="admin-table-wrap">
+                    <div class="admin-table-toolbar">
+                        <input type="text" class="search-input" id="students-search" placeholder="🔍 Search students..." oninput="filterStudentsTable(this.value)" aria-label="Search students">
+                        <select class="nl-select" id="students-filter-status" onchange="filterStudentsTable(document.getElementById('students-search').value)" aria-label="Filter status" style="font-size:0.82rem;">
+                            <option value="all">All</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" id="students-table" aria-label="Students">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Level</th>
+                                    <th>XP</th>
+                                    <th>Adaptive</th>
+                                    <th>TTS</th>
+                                    <th>Current Lesson</th>
+                                    <th>Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-table-body">
+                                <tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:30px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PARENTS PANEL -->
+            <section class="admin-panel" id="parents-panel" aria-label="Parent Management">
+                <div class="admin-panel-header">
+                    <div><h2>Parent Management</h2><p>View all registered parents.</p></div>
+                    <button class="btn btn-green btn-sm" onclick="adminLoadParents()" aria-label="Refresh">🔄 Refresh</button>
+                </div>
+                <div class="admin-table-wrap">
+                    <div class="admin-table-toolbar">
+                        <input type="text" class="search-input" id="parents-search" placeholder="🔍 Search parents..." oninput="filterParentsTable(this.value)" aria-label="Search parents">
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" id="parents-table" aria-label="Parents">
+                            <thead>
+                                <tr>
+                                    <th>Parent</th>
+                                    <th>Email</th>
+                                    <th>Linked Learners</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="parents-table-body">
+                                <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:30px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LESSONS PANEL -->
+            <section class="admin-panel" id="lessons-panel" aria-label="Lessons">
+                <div class="admin-panel-header">
+                    <div><h2>All Lessons</h2><p>View all lessons with completion stats.</p></div>
+                    <button class="btn btn-teal btn-sm" onclick="adminLoadLessons()" aria-label="Refresh">🔄 Refresh</button>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">📚</span> Lessons</div>
+                    <div id="lessons-list-container">
+                        <p style="color:var(--text-light);font-size:0.85rem;font-weight:600;text-align:center;padding:20px;">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- UPLOADS PANEL -->
+            <section class="admin-panel" id="uploads-panel" aria-label="Upload Center">
+                <div class="admin-panel-header">
+                    <div><h2>Upload Center</h2><p>Upload and manage files. (Supabase Storage integration ready)</p></div>
+                </div>
+                <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload files. Drag and drop or click to choose files.">
+                    <div class="upload-icon">📤</div>
+                    <h3>Drag &amp; Drop Files Here</h3>
+                    <p>or</p>
+                    <div class="upload-btn-wrapper">
+                        <button class="btn btn-teal" onclick="document.getElementById('file-input').click()" aria-label="Choose files">Choose Files</button>
+                        <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp3,.wav,.mp4,.csv,.zip" onchange="handleFileSelect(this.files)" aria-label="File input">
+                    </div>
+                    <div class="file-type-tags">
+                        <span class="file-type-tag">PDF</span><span class="file-type-tag">DOC/DOCX</span>
+                        <span class="file-type-tag">PPT/PPTX</span><span class="file-type-tag">JPG/PNG/GIF</span>
+                        <span class="file-type-tag">MP3/WAV</span><span class="file-type-tag">MP4</span>
+                        <span class="file-type-tag">CSV</span><span class="file-type-tag">ZIP</span>
+                    </div>
+                </div>
+                <div class="upload-info" id="upload-info">
+                    <div class="file-name" id="upload-file-name">No file selected</div>
+                    <div class="file-size" id="upload-file-size">0 KB</div>
+                    <div class="progress-container"><div class="progress-bar"><div class="progress-fill green" id="upload-progress-bar"></div></div></div>
+                    <div class="upload-status" id="upload-status">Waiting to upload...</div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">📁</span> Uploaded Files</div>
+                    <p style="color:var(--text-light);font-size:0.85rem;font-weight:600;text-align:center;padding:20px;">
+                        Supabase Storage integration is ready. Use <code>uploadFile()</code>, <code>deleteFile()</code>, <code>downloadFile()</code> from script.js when connected.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ANALYTICS PANEL -->
+            <section class="admin-panel" id="analytics-panel" aria-label="Analytics">
+                <div class="admin-panel-header">
+                    <div><h2>Analytics</h2><p>Detailed platform insights.</p></div>
+                    <button class="btn btn-teal btn-sm" onclick="adminLoadDashboard(); adminLoadRecentActivity();" aria-label="Refresh">🔄 Refresh</button>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytics-card"><div class="ac-icon teal">👨‍🎓</div><div class="ac-info"><h3 id="analytics-total-students">—</h3><p>Total Students</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon purple">👩‍👧</div><div class="ac-info"><h3 id="analytics-total-parents">—</h3><p>Total Parents</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon green">📚</div><div class="ac-info"><h3 id="analytics-total-lessons">—</h3><p>Lessons</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon blue">✅</div><div class="ac-info"><h3 id="analytics-completed-lessons">—</h3><p>Completed Lessons</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon red">⭐</div><div class="ac-info"><h3 id="analytics-avg-score">—</h3><p>Average Score</p></div></div>
+                    <div class="analytics-card"><div class="ac-icon orange">🔥</div><div class="ac-info"><h3 id="analytics-daily-xp">—</h3><p>Daily XP</p></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="icon">🕐</span> Recent Activity</div>
+                    <div class="recent-uploads-list" id="analytics-recent-activity"><p style="color:var(--text-light);font-size:0.85rem;font-weight:600;text-align:center;padding:20px;">Loading...</p></div>
+                </div>
+            </section>
+
+            <!-- SETTINGS PANEL -->
+            <section class="admin-panel" id="settings-panel" aria-label="Settings">
+                <div class="admin-panel-header">
+                    <div><h2>Settings</h2><p>Accessibility &amp; system preferences.</p></div>
+                </div>
+                <div class="settings-group">
+                    <div class="settings-row"><div><div class="settings-label">High Contrast Mode</div><div class="settings-desc">Increase contrast</div></div><label class="toggle-switch" aria-label="Toggle high contrast"><input type="checkbox" id="settings-high-contrast" onchange="applyColorMode(this.checked ? 'High Contrast' : 'Default')"><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-label">Dark Mode</div><div class="settings-desc">Dark theme</div></div><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="settings-dark-mode" onchange="applyColorMode(this.checked ? 'Dark' : 'Default')"><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-label">Large Font</div><div class="settings-desc">Increase text size</div></div><label class="toggle-switch" aria-label="Toggle large font"><input type="checkbox" id="settings-large-font" onchange="applyFontSize(this.checked ? 'Large' : 'Medium')"><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-label">Text-to-Speech</div><div class="settings-desc">Spoken feedback</div></div><label class="toggle-switch" aria-label="Toggle TTS"><input type="checkbox" id="settings-tts" onchange="applyTTS(this.checked)"><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-label">Font Size</div><div class="settings-desc">Preferred size</div></div><select class="nl-select" id="settings-font-size-select" onchange="applyFontSize(this.value)" aria-label="Font size" style="width:120px;"><option value="Small">Small</option><option value="Medium">Medium</option><option value="Large">Large</option></select></div>
+                    <div class="settings-row"><div><div class="settings-label">Color Mode</div><div class="settings-desc">Color scheme</div></div><select class="nl-select" id="settings-color-mode-select" onchange="applyColorMode(this.value)" aria-label="Color mode" style="width:160px;"><option value="Default">Default</option><option value="High Contrast">High Contrast</option><option value="Dark">Dark</option></select></div>
+                    <div class="settings-row"><div><div class="settings-label">Daily Time Limit</div><div class="settings-desc">Session duration</div></div><select class="nl-select" id="settings-time-limit-select" onchange="applyTimeLimit(this.value)" aria-label="Time limit" style="width:120px;"><option value="No limit">No limit</option><option value="30 min">30 min</option><option value="1 hour">1 hour</option><option value="2 hours">2 hours</option></select></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+    // =========================================================
+    // ADMIN DASHBOARD — Authorized Access & Live Data Only
+    // =========================================================
+
+    // ---- STATE ----
+    let _adminStudentsCache = [];
+    let _adminParentsCache = [];
+
+    // ---- AUTH GUARD ----
+    async function authorizeAdmin() {
+        const guard = document.getElementById('auth-guard');
+        const topnav = document.getElementById('admin-topnav');
+        const layout = document.getElementById('admin-layout');
+
+        try {
+            const client = await waitForSupabase(5000);
+            if (!client || !client.auth) {
+                guard.innerHTML = '<h2 style="color:var(--red);">⚠️ Cannot connect to Supabase</h2><p style="color:var(--text-mid);">Please check your connection and try again.</p><button class="btn btn-teal mt-16" onclick="location.reload()">Retry</button>';
+                return;
+            }
+
+            const { data: { session }, error: sessionError } = await client.auth.getSession();
+            if (sessionError || !session) {
+                console.error('❌ No authenticated session:', sessionError);
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Query users table to get role
+            const { data: userData, error: userError } = await client
+                .from('users')
+                .select('role, display_name')
+                .eq('id', session.user.id)
+                .maybeSingle();
+
+            if (userError) {
+                console.error('❌ Error querying users table:', userError.message, userError);
+                guard.innerHTML = '<h2 style="color:var(--red);">⚠️ Authorization Error</h2><p style="color:var(--text-mid);">Could not verify your role. Check console for details.</p><p style="font-size:0.8rem;color:var(--text-light);">Error: ' + userError.message + '</p><button class="btn btn-teal mt-16" onclick="location.reload()">Retry</button>';
+                return;
+            }
+
+            if (!userData) {
+                console.error('❌ User not found in users table');
+                guard.innerHTML = '<h2 style="color:var(--red);">⚠️ User Not Found</h2><p style="color:var(--text-mid);">Your account was not found in the database.</p><button class="btn btn-teal mt-16" onclick="showLogout()">Logout</button>';
+                return;
+            }
+
+            const role = (userData.role || '').toLowerCase();
+            console.log('🔐 User role:', role);
+
+            if (role === 'admin') {
+                // ALLOW ACCESS
+                guard.style.display = 'none';
+                topnav.style.display = '';
+                layout.style.display = '';
+                const displayName = userData.display_name || 'Admin';
+                document.getElementById('admin-welcome-name').textContent = displayName;
+                document.getElementById('admin-username').textContent = displayName;
+                localStorage.setItem('neurolearn_display_name', displayName);
+                localStorage.setItem('neurolearn_user_email', session.user.email);
+                localStorage.setItem('neurolearn_user_id', session.user.id);
+                initAdminDashboard();
+            } else if (role === 'student') {
+                console.log('⏩ Student detected — redirecting to student dashboard');
+                window.location.href = 'dashboard.html';
+            } else if (role === 'parent') {
+                console.log('⏩ Parent detected — redirecting to parent profile');
+                window.location.href = 'parent-profile.html';
+            } else {
+                console.error('❌ Unknown role:', role);
+                guard.innerHTML = '<h2 style="color:var(--red);">⚠️ Unauthorized Role</h2><p style="color:var(--text-mid);">Your account role "' + role + '" does not have admin access.</p><button class="btn btn-teal mt-16" onclick="showLogout()">Logout</button>';
+            }
+        } catch (e) {
+            console.error('❌ Admin authorization error:', e);
+            guard.innerHTML = '<h2 style="color:var(--red);">⚠️ Authorization Failed</h2><p style="color:var(--text-mid);">An unexpected error occurred.</p><p style="font-size:0.8rem;color:var(--text-light);">' + e.message + '</p><button class="btn btn-teal mt-16" onclick="location.reload()">Retry</button>';
+        }
+    }
+
+    // ---- INIT ----
+    async function initAdminDashboard() {
+        console.log('🚀 Initializing Admin Dashboard');
+        await adminCheckConnection();
+        adminLoadDashboard();
+        adminLoadStudents();
+        adminLoadParents();
+        adminLoadLessons();
+        adminLoadRecentActivity();
+        syncAdminSettings();
+    }
+
+    // ---- PANEL SWITCHING ----
+    function switchAdminPanel(panelId, btn) {
+        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(panelId);
+        if (target) target.classList.add('active');
+        document.querySelectorAll('.admin-nav-item').forEach(item => {
+            item.classList.remove('active');
+            item.removeAttribute('aria-current');
+        });
+        if (btn) { btn.classList.add('active'); btn.setAttribute('aria-current', 'page'); }
+        const sidebar = document.getElementById('admin-sidebar');
+        if (sidebar) sidebar.classList.remove('mobile-show');
+    }
+
+    function toggleMobileSidebar() {
+        document.getElementById('admin-sidebar')?.classList.toggle('mobile-show');
+    }
+
+    // ---- SETTINGS SYNC ----
+    function syncAdminSettings() {
+        const colorMode = localStorage.getItem('pref_color_mode') || 'Default';
+        const fontSize = localStorage.getItem('pref_font_size') || 'Medium';
+        const ttsEnabled = localStorage.getItem('pref_tts') === 'true';
+        const timeLimit = localStorage.getItem('pref_time_limit') || 'No limit';
+        const hc = document.getElementById('settings-high-contrast');
+        const dm = document.getElementById('settings-dark-mode');
+        const lf = document.getElementById('settings-large-font');
+        const tts = document.getElementById('settings-tts');
+        const fs = document.getElementById('settings-font-size-select');
+        const cm = document.getElementById('settings-color-mode-select');
+        const tl = document.getElementById('settings-time-limit-select');
+        if (hc) hc.checked = colorMode === 'High Contrast';
+        if (dm) dm.checked = colorMode === 'Dark';
+        if (lf) lf.checked = fontSize === 'Large';
+        if (tts) tts.checked = ttsEnabled;
+        if (fs) fs.value = fontSize;
+        if (cm) cm.value = colorMode;
+        if (tl) tl.value = timeLimit;
+    }
+
+    // ---- UPLOAD HANDLERS ----
+    function handleFileSelect(files) {
+        if (!files || files.length === 0) return;
+        const file = files[0];
+        const info = document.getElementById('upload-info');
+        if (info) info.classList.add('show');
+        adminSetText('upload-file-name', file.name);
+        adminSetText('upload-file-size', formatFileSize(file.size));
+        uploadFileToStorage(file);
+    }
+
+    function uploadFileToStorage(file) {
+        if (!file) { showToast('Please select a file.', '#FF8C42'); return; }
+        const statusEl = document.getElementById('upload-status');
+        const bar = document.getElementById('upload-progress-bar');
+        if (!statusEl || !bar) return;
+        statusEl.textContent = 'Uploading...';
+        statusEl.className = 'upload-status';
+        bar.style.width = '0%';
+
+        // TODO: Connect to Supabase Storage bucket
+        // const client = await waitForSupabase();
+        // const { data, error } = await client.storage.from('uploads').upload(path, file);
+        // if (error) { statusEl.textContent = '❌ Upload failed: ' + error.message; statusEl.className = 'upload-status error'; return; }
+
+        // Simulated progress for demo
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 20) + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                statusEl.textContent = '✅ Upload complete (demo mode)';
+                statusEl.className = 'upload-status success';
+                bar.style.width = '100%';
+                showToast('File uploaded (demo). Connect Supabase Storage for real uploads.', '#4CAF7D');
+            } else {
+                bar.style.width = progress + '%';
+                statusEl.textContent = 'Uploading... ' + progress + '%';
+            }
+        }, 300);
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes || bytes === 0) return '0 KB';
+        const units = ['Bytes', 'KB', 'MB', 'GB'];
+        let i = 0; let size = bytes;
+        while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
+        return size.toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
+    }
+
+    // ---- STUDENT FILTER ----
+    function filterStudentsTable(query) {
+        const q = (query || '').toLowerCase();
+        const filter = document.getElementById('students-filter-status')?.value || 'all';
+        const rows = document.querySelectorAll('#students-table-body tr');
+        rows.forEach(row => {
+            const name = row.querySelector('[data-label="Student"]')?.textContent?.toLowerCase() || '';
+            const email = row.querySelector('[data-label="Email"]')?.textContent?.toLowerCase() || '';
+            const match = name.includes(q) || email.includes(q);
+            row.style.display = match ? '' : 'none';
+        });
+    }
+
+    // ---- PARENT FILTER ----
+    function filterParentsTable(query) {
+        const q = (query || '').toLowerCase();
+        const rows = document.querySelectorAll('#parents-table-body tr');
+        rows.forEach(row => {
+            const name = row.querySelector('[data-label="Parent"]')?.textContent?.toLowerCase() || '';
+            const email = row.querySelector('[data-label="Email"]')?.textContent?.toLowerCase() || '';
+            row.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+        });
+    }
+
+    // ---- LOGOUT ----
+    function logoutAdmin() {
+        if (confirm('Are you sure you want to log out?')) showLogout();
+    }
+
+    // ---- DRAG & DROP ----
+    document.addEventListener('DOMContentLoaded', function() {
+        const zone = document.getElementById('upload-zone');
+        if (zone) {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => { zone.classList.remove('drag-over'); });
+            zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files); });
+            zone.addEventListener('click', () => document.getElementById('file-input')?.click());
+        }
+        enhanceAccessibility();
+        setActiveNav();
+        loadSavedCustomization();
+        authorizeAdmin();
+    });
+    </script>
+</body>
+</html>
+
