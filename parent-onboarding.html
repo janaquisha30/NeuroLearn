@@ -505,7 +505,7 @@
                     <span class="choice-badge link">🔑 Child Code</span>
                 </div>
 
-                <div class="choice-card" onclick="goToCreateChild()">
+                <div class="choice-card" onclick="CreateChild()">
                     <div class="choice-icon">✨</div>
                     <h3>Create Learner</h3>
                     <p>Set up a learner profile for your child now.</p>
@@ -655,7 +655,8 @@
             showToast('✅ Profile saved!', '#4CAF7D');
 
             // Go to step 2
-            goToStep(2);
+            //goToStep(2);
+            window.location.href = 'signup.html?role=child';
 
         } catch (error) {
             console.error('Error:', error);
