@@ -505,6 +505,13 @@ async function checkAuthAndRedirect() {
             
             const currentPage = window.location.pathname.split('/').pop();
             
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.get('role') === 'child') {
+                console.log('Child signup mode - skipping auto redirect');
+                return;
+    }
+            
             if (currentPage === 'index.html' || currentPage === 'signup.html' || currentPage === '') {
                 console.log('🔄 Auto-redirecting based on role:', role);
                 
@@ -1087,9 +1094,33 @@ if (document.getElementById('login-screen')) {
     });
 }
 
+
 // ---- Signup Page ----
 if (document.getElementById('signup-screen')) {
     document.addEventListener('DOMContentLoaded', () => {
+
+        const params = new URLSearchParams(window.location.search);
+
+        // If we're creating a child account from the parent onboarding
+        if (params.get('role') === 'child') {
+
+            // Automatically select Student (Child)
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const studentBtn = document.querySelector('[data-role="student"]');
+            if (studentBtn) {
+                studentBtn.classList.add('active');
+            }
+
+            console.log('🧒 Child signup mode enabled.');
+
+            // Skip auto-redirect to the parent dashboard
+            return;
+        }
+
+        // Normal signup page behavior
         checkAuthAndRedirect();
     });
 }
